@@ -1,0 +1,129 @@
+name: Release Java CLI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  tag-version:
+    name: Tag new version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3.5.3
+        id: checkout-code
+        name: Checkout code
+        with:
+          ref: ${{ github.sha }}
+
+      # Create a new tag on main after merge
+      - name: Get all tags
+        id: get_tags
+        run: git fetch --tags origin
+
+      - name: Find previous tag
+        id: previous_tag
+        uses: WyriHaximus/github-action-get-previous-tag@v1.3.0
+        with:
+          prefix: v
+          fallback: v0.0.0 # would be the first tag auto created if there are no previous tags
+
+      - name: Calculate next version
+        id: semvers
+        uses: WyriHaximus/github-action-next-semvers@v1.2.1
+        with:
+          version: ${{ steps.previous_tag.outputs.tag }}
+
+      - name: Create new patch
+        id: create_tag
+        uses: rickstaa/action-create-tag@v1.6.2
+        with:
+          tag: ${{ steps.semvers.outputs.v_patch }} # semvers outputs all next versions like major, minor and patch with optional v.
+          commit_sha: ${{ github.sha }}
+
+    outputs:
+      nextTag: ${{ steps.semvers.outputs.v_patch }}
+
+  build-windows-installer:
+    name: Build Installer on Windows
+    needs: [tag-version]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3.5.3
+        id: checkout-code
+        name: Checkout code
+        with:
+          ref: ${{ github.sha }}
+
+      # SETUP BUILD ENVIRONMENT
+      - id: setup-jdk
+        name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      # UPDATE POM VERSION
+      - id: version-up
+        name: Update POM Version
+        run: mvn versions:set -D"newVersion"="${{ needs.tag-version.outputs.nextTag }}"
+
+      # BUILD FOR DISTRIBUTION
+      - id: build
+        name: Package Application
+        run: mvn -B package --file pom.xml
+
+      # PACKAGE FOR DISTRIBUTION
+      - id: package
+        name: Package Installer
+        run: jpackage --verbose --input ./target --main-jar ${{ vars.name }}-${{ needs.tag-version.outputs.nextTag }}.jar --main-class org.example.Main --name ${{ vars.name }} --dest build/distributions --win-console
+
+      # SAVE INSTALLER
+      - id: upload-installer
+        name: Upload installer
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./build/distributions/${{ vars.name }}-1.0.exe
+          name: windows-installer
+          retention-days: 1
+
+
+
+  create-release:
+    name: Create Release
+    permissions: write-all
+    runs-on: ubuntu-latest
+    needs: [tag-version, build-windows-installer]
+    steps:
+
+      # DOWNLOAD INSTALLERS
+      - id: download-windows-installer
+        name: Download Windows installer
+        uses: actions/download-artifact@v3
+        with:
+          name: windows-installer
+
+      # CREATE GITHUB RELEASE AND ADD ASSETS
+      - id: create-release
+        name: Create GitHub release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.tag-version.outputs.nextTag }}
+          release_name: ${{ needs.tag-version.outputs.nextTag }}
+          draft: false
+          prerelease: false
+
+      - id: release-windows-installer
+        name: Release Windows installer
+        uses: actions/upload-release-asset@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: ${{ vars.name }}-1.0.exe
+          asset_name: ${{ vars.name }}.exe
+          asset_content_type: application/x-binary
