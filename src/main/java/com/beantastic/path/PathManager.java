@@ -23,9 +23,11 @@ public class PathManager {
 
     //START PATH\\
     public static void startPath(Scanner scanner){
-        Main.typewriter("You wake up finding yourself... \n" + "On the kitchen floor... No bean has ever ventured this low before, well not any self respecting bean that is...");
+        Main.typewriter("You wake up finding yourself...\nOn the kitchen floor... No bean has ever ventured this low before, well not any self-respecting bean that is... The kitchen counter looms above you, your home.\n\n"
+            + "Down on the floor, it's a different story. The floor is a realm of forgotten leftovers, crumbs, and the occasional sticky spill. It's where the unwanted and unappreciated foods reside, far from the glory of the counter above. As a bean, you've always been taught to stay on the counter, to avoid the disgrace of the floor at all costs."
+            + "\n\nYet, here you are, having fallen off the counter in a moment of carelessness or perhaps curiosity. The floor stretches out before you, mysterious and unfamiliar. The journey back to the counter seems daunting, but staying on the floor is not an option. What will you do?");
 
-        Main.typewriter("\n1. Move forward! No one can beat the mighty bean \n" + 
+        Main.typewriter("\n1. Find a way back home \n" + 
             "\n2. Panic!");
 
         pickPath(scanner);
@@ -34,11 +36,11 @@ public class PathManager {
     public static void pickPath(Scanner scanner){
         String pathOption = scanner.nextLine().toLowerCase();
 
-        if(pathOption.equals("1") || pathOption.equals("one") || pathOption.equals("move forward") || pathOption.equals("walk forward")){
+        if(pathOption.equals("1") || pathOption.equals("one") || pathOption.equals("Find a way back home")){
 
-            Main.typewriter("\nYou move forward with no fear! Looking for a way out" + 
-                "\n1. Carry on walking\n" + 
-                "\n2. Roll!");
+            Main.typewriter("\nYou move forward, looking for a way out" + 
+                "\n1. Keep walking forward\n" + 
+                "\n2. Look around");
 
             keepWalking(scanner);
 
@@ -86,10 +88,10 @@ public class PathManager {
     public static void keepWalking(Scanner scanner){
         String pathOption = scanner.nextLine().toLowerCase();
 
-        if(pathOption.equals("1") || pathOption.equals("one") || pathOption.equals("walk")){
-            
-        } else if(pathOption.equals("2") || pathOption.equals("two") || pathOption.equals("roll")){
-
+        if(pathOption.equals("1") || pathOption.equals("one") || pathOption.equals("keep walking forward")){
+            //add some dialogue here
+        } else if(pathOption.equals("2") || pathOption.equals("two") || pathOption.equals("look around")){
+            //add some dialogue here
         } else{
             Main.typewriter("Please input a valid option");
             keepWalking(scanner);

@@ -129,6 +129,7 @@ public class Player {
     public void setIsRizzedUp(boolean rizzedUp){
         this.rizzedUp = rizzedUp;
     }
+    
     public boolean isRizzedUp(){
         return rizzedUp;
     }
