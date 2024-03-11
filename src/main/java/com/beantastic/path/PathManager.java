@@ -1,25 +1,40 @@
 package com.beantastic.path;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 import com.beantastic.Main;
+import com.beantastic.enemies.EnemyManager;
 import com.beantastic.event.CombatSystem;
 import com.beantastic.event.ObstacleSystem;
-import com.beantastic.player.PlayerManager;
+import com.beantastic.items.ItemClass;
+import com.beantastic.items.ItemManager;
+import com.beantastic.player.Player;
 
 public class PathManager {
-    private static int levelDifficulty = 1;
-    private static final int numOfStagesInPath = 3;
+    private final Player player;
+    private final EnemyManager enemyManager;
 
-    private static final Random random = new Random();
+    private final ItemManager itemManager;
+    private int levelDifficulty;
+    private final Random random;
+    private final Scanner scanner;
+    private final int numOfStagesInPath;
 
-    public static void resetLevelDifficulty(){
-        levelDifficulty = 1;
+
+    public PathManager(Player player, EnemyManager enemyManager, ItemManager itemManager, Random random, Scanner scanner, int numOfStagesInPath) {
+        this.player = player;
+        this.enemyManager = enemyManager;
+        this.itemManager = itemManager;
+        this.levelDifficulty = 1;
+        this.scanner = scanner;
+        this.random = random;
+        this.numOfStagesInPath = numOfStagesInPath;
     }
 
     //START PATH\\
-    public static void startPath(Scanner scanner){
+    private void startPath(){
         Main.typewriter("""
                 You wake up finding yourself...
                 On the kitchen floor... No bean has ever ventured this low before, well not any self-respecting bean that is... The kitchen counter looms above you, your home.
@@ -34,32 +49,29 @@ public class PathManager {
 
                 2. Panic!""");
 
-        pickPath(scanner);
+        pickPath();
     }
 
-    public static void pickPath(Scanner scanner){
+    private void pickPath(){
         String pathOption = scanner.nextLine().toLowerCase();
 
         if(pathOption.equals("1") || pathOption.equals("one") || pathOption.equals("find a way back home")){
-
             Main.typewriter("""
 
                     You move forward, looking for a way out
                     1. Keep walking forward
 
                     2. Look around""");
-
-            keepWalking(scanner);
-
+            keepWalking();
         } else if(pathOption.equals("2") || pathOption.equals("two") || pathOption.equals("panic") || pathOption.equals("panic!")){
-            panic(scanner);
-        }else{
+            panic();
+        }else {
             Main.typewriter("\nPlease input a valid option");
-            pickPath(scanner);
+            pickPath();
         }
     }
 
-    public static void panic(Scanner scanner){
+    private void panic(){
         Main.typewriter("""
 
                 You start to panic...
@@ -71,11 +83,11 @@ public class PathManager {
                 3. Panic more!
                 """);
 
-        panicOptions(scanner);
+        panicOptions();
 
     }
 
-    public static void panicOptions(Scanner scanner){
+    private void panicOptions(){
         String pathOption = scanner.nextLine().toLowerCase();
 
         switch (pathOption) {
@@ -85,25 +97,25 @@ public class PathManager {
 
                 Main.typewriter("""
                         You make so much noise crying you attract something...
-                        You hear it getting closer...\s
+                        You hear it getting closer...
                         And closer...
                         """);
-                CombatSystem.startCombatEvent(scanner, 1);
+                new CombatSystem(scanner, player, enemyManager.getEnemy(1), itemManager).doCombatEvent();
             }
             case "3", "three", "panic" -> {
 
                 Main.typewriter("You panic so much you explode!");
-                PlayerManager.getPlayer().die();
+                player.die();
             }
             default -> {
 
                 Main.typewriter("\nPlease input a valid option");
-                panicOptions(scanner);
+                panicOptions();
             }
         }
     }
 
-    public static void keepWalking(Scanner scanner){
+    private void keepWalking(){
         String pathOption = scanner.nextLine().toLowerCase();
 
         switch (pathOption) {
@@ -115,34 +127,40 @@ public class PathManager {
             }
             default -> {
                 Main.typewriter("Please input a valid option");
-                keepWalking(scanner);
+                keepWalking();
             }
         }
 
     }
 
-    public static void generatePath(Scanner scanner){
-        startPath(scanner);
+    public boolean generatePath(){
+        startPath();
+
+        List<Runnable> stages = List.of(
+                () -> {
+                    ItemClass item = new CombatSystem(scanner, player, enemyManager.getEnemy(levelDifficulty), itemManager).doCombatEvent();
+                    if(item != null) item = itemManager.pickUpItemOption(item);
+                    if(item != null) player.addItem(item);
+                    levelDifficulty++;
+                    },
+                () -> ObstacleSystem.obstacle(random, scanner)
+        );
 
         for (int stage = 1; stage <= numOfStagesInPath; stage++) {
-            if (PlayerManager.getPlayer().isDead() || PlayerManager.getPlayer().isRizzedUp()) {
-                return;
+            stages.get((stage -1) % stages.size()).run();
+            if (player.isDead() || player.isRizzedUp()) {
+                return false;
             }
-
-            CombatSystem.startCombatEvent(scanner, levelDifficulty);
-            levelDifficulty++;
-            ObstacleSystem.obstacle(random, scanner);
         }
 
         endPath();
+        return true;
     }
 
 
     //END PATH\\
-    public static void endPath(){
+    private void endPath(){
         Main.typewriter("After your long treacherous journey, you finally see it... The light at the end of the tunnel" +
             "The way up and home, away from this dark place");
-        //game over
-        Main.gameOver(true);
     }
 }

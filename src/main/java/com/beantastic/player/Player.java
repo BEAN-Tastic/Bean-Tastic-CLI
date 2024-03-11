@@ -1,6 +1,5 @@
 package com.beantastic.player;
 
-import com.beantastic.Main;
 import com.beantastic.items.ItemClass;
 import com.beantastic.stats.StatBlockable;
 
@@ -68,8 +67,7 @@ public class Player implements StatBlockable {
     }
 
     public void die(){
-        Main.typewriter("...You DIED!");
-        Main.gameOver(false);
+        this.takeDamage(Integer.MAX_VALUE);
     }
 
     public boolean isDead(){

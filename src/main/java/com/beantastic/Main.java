@@ -6,7 +6,6 @@ import java.util.stream.IntStream;
 
 import com.beantastic.enemies.Enemy;
 import com.beantastic.enemies.EnemyManager;
-import com.beantastic.event.ObstacleSystem;
 import com.beantastic.items.ItemClass;
 import com.beantastic.items.ItemManager;
 import com.beantastic.path.PathManager;
@@ -19,20 +18,20 @@ import com.beantastic.stats.StatBlock;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
-    static Scanner scanner;
+
 
     public static void main(String[] args) {
         Random random = new Random();
-        scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         //TEMP DATA FOR NOW
-        addEnemies();
+        EnemyManager enemyManager = addEnemies(random);
         PlayerClassManager playerClassManager = addClass();
-        ItemManager itemManager = addItems(random);
+        ItemManager itemManager = addItems(random, scanner);
         PlayerManager playerManager = new PlayerManager(scanner, playerClassManager.getClassList());
 
         // START GAME
-        startGame(playerClassManager, itemManager, playerManager);
+        startGame(random, scanner, itemManager, playerManager, enemyManager);
     }
 
     //TEMP DATA INSERTION\\
@@ -55,7 +54,7 @@ public class Main {
                         new StatBlock(5, 3, 2, 2)));
     }
 
-    public static ItemManager addItems(Random random){
+    public static ItemManager addItems(Random random, Scanner scanner){
         return new ItemManager(
                 random,
                 scanner,
@@ -63,29 +62,20 @@ public class Main {
                 new ItemClass("tea cup", "steaming black tea", new StatBlock(0, 0, -1, 0), "Rare"));
     }
 
-    public static void addEnemies(){
-        Enemy easEnemy = new Enemy();
-        easEnemy.setEnemy("Sorcerer Soup", 3, 1, 2, "Easy",
-            "Fiery Ladle Strike- The Sorcerer Soup hurls a fiery ladle at you, inflicting heavy damage to your health.",
-            "A mystical soup with potent magical properties.");
-        EnemyManager.addEasyEnemy(easEnemy);
-
-
-        Enemy midEnemy = new Enemy();
-        midEnemy.setEnemy("Cursed Carrot", 5, 2, 3, "Medium",
-            "Toxic Root Slam- The Cursed Carrot slams its toxic roots into the ground, weakening your defenses.",
-            "A carrot cursed by dark magic, capable of unleashing havoc.");
-        EnemyManager.addMediumEnemy(midEnemy);
-
-        Enemy hardEnemy = new Enemy();
-        hardEnemy.setEnemy("Haunted Hamburger", 7, 3, 4, "Hard",
-            "Seductive Sizzle- The Haunted Hamburger emits a seductive sizzle, enchanting you and lowering your charisma.",
-            "A haunted hamburger possessed by vengeful spirits.");
-        EnemyManager.addHardEnemy(hardEnemy);
-
+    public static EnemyManager addEnemies(Random random){
+        return new EnemyManager(random,
+                new Enemy("Sorcerer Soup", new StatBlock(3, 0, 1, 2), "Easy",
+                        "Fiery Ladle Strike- The Sorcerer Soup hurls a fiery ladle at you, inflicting heavy damage to your health.",
+                        "A mystical soup with potent magical properties."),
+                new Enemy("Cursed Carrot", new StatBlock( 5, 0, 2, 3), "Medium",
+                        "Toxic Root Slam- The Cursed Carrot slams its toxic roots into the ground, weakening your defenses.",
+                        "A carrot cursed by dark magic, capable of unleashing havoc."),
+                new Enemy("Haunted Hamburger", new StatBlock(7, 0, 3, 4), "Hard",
+                        "Seductive Sizzle- The Haunted Hamburger emits a seductive sizzle, enchanting you and lowering your charisma.",
+                        "A haunted hamburger possessed by vengeful spirits."));
     }
 
-    public static void startGame(PlayerClassManager playerClassManager, ItemManager itemManager, PlayerManager playerManager){
+    public static void startGame(Random random, Scanner scanner, ItemManager itemManager, PlayerManager playerManager, EnemyManager enemyManager){
         System.out.println("""
                   ____                         _            _   _                    _                 _                  \s
                  |  _ \\                       | |          | | (_)          /\\      | |               | |                 \s
@@ -101,7 +91,8 @@ public class Main {
             return;
         }
         Player player = playerManager.createPlayer();
-        PathManager.generatePath(scanner);
+        PathManager pathManager = new PathManager(player, enemyManager, itemManager, random, scanner, 3);
+        gameOver(pathManager.generatePath(), scanner);
     }
 
     public static boolean getStartInput(Scanner scanner) {
@@ -133,7 +124,7 @@ public class Main {
         System.out.println(); // Move to the next line after printing the text
     }
 
-    public static void gameOver(boolean won){
+    public static void gameOver(boolean won, Scanner scanner){
         if(won){
             typewriter("Your are the mightiest Bean there ever was!");
             System.out.println("""
@@ -185,17 +176,13 @@ public class Main {
 
     public static void restart(){
         Random random = new Random();
+        Scanner scanner = new Scanner(System.in);
         //TEMP DATA FOR NOW
-        addEnemies();
+        EnemyManager enemyManager = addEnemies(random);
         PlayerClassManager playerClassManager = addClass();
-        ItemManager itemManager = addItems(random);
+        ItemManager itemManager = addItems(random, scanner);
         PlayerManager playerManager = new PlayerManager(scanner, playerClassManager.getClassList());
 
-        // START GAME
-        startGame(playerClassManager, itemManager, playerManager);
-        //reset all stats
-        ObstacleSystem.resetBeanToObstacleList();
-        PathManager.resetLevelDifficulty();
-        startGame(playerClassManager, itemManager, playerManager);
+        startGame(random, scanner, itemManager, playerManager, enemyManager);
     }
 }

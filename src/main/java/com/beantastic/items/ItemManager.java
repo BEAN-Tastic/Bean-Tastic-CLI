@@ -41,7 +41,7 @@ public class ItemManager {
             }
     }
 
-    public ItemClass pickRandomItem(List<ItemClass> items){
+    private ItemClass pickRandomItem(List<ItemClass> items){
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("List must not be null or empty");
         }
@@ -50,11 +50,11 @@ public class ItemManager {
         return items.get(randomIndex);
     }
 
-    public ItemClass dropItem(List<ItemClass> items){
+    private ItemClass dropItem(List<ItemClass> items){
         ItemClass droppedItem = pickRandomItem(items);
         Main.typewriter("Item: " + droppedItem.getName() + "\n"
             + "Description: " + droppedItem.getDescription() + "\n");
-        return pickUpItemOption(droppedItem);
+        return droppedItem;
     }
 
     public ItemClass pickUpItemOption(ItemClass item){
@@ -64,18 +64,17 @@ public class ItemManager {
                 2. No\s
                 """);
         String playerInpuString = scanner.nextLine().toLowerCase();
-        return droppedItemActionOptions(playerInpuString, scanner, item);
+        return droppedItemActionOptions(playerInpuString, item);
     }
 
-    public static ItemClass droppedItemActionOptions(String option, Scanner scanner, ItemClass item){
+    private ItemClass droppedItemActionOptions(String option, ItemClass item){
         if(option.equals("1") || option.equals("one") || option.equals("yes")){
             return item;
         }else if(option.equals("2") || option.equals("two") || option.equals("no")){
             return null;
         }else {
             Main.typewriter("Please input a valid option \n");
-            String playerInpuString = scanner.nextLine().toLowerCase();
-            return droppedItemActionOptions(playerInpuString, scanner, item);
+            return pickUpItemOption(item);
         }
     }
 }
