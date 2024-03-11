@@ -1,89 +1,81 @@
 package com.beantastic.items;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 import com.beantastic.Main;
-import com.beantastic.player.PlayerManager;
 
 public class ItemManager {
-    private static List<ItemClass> commonItems = new ArrayList<>();
-    private static List<ItemClass> uncommonItems = new ArrayList<>();
-    private static List<ItemClass> rareItems = new ArrayList<>();
-    private static List<ItemClass> epicItems = new ArrayList<>();
+    private final List<ItemClass> commonItems;
+    private final List<ItemClass> uncommonItems;
+    private final List<ItemClass> rareItems;
+    private final List<ItemClass> epicItems;
 
-    static Random random = new Random();
+    private final Random random;
 
-    public static void addItemToList(ItemClass item){
-        if(item.getRarity().equals("Common")){
-            commonItems.add(item);
-        }else if(item.getRarity().equals("Uncommon")){
-            uncommonItems.add(item);
-        }else if(item.getRarity().equals("Rare")){
-            rareItems.add(item);
-        }else if(item.getRarity().equals("Epic")){
-            epicItems.add(item);
-        }
-        
+    private final Scanner scanner;
+
+    public ItemManager (Random random, Scanner scanner, ItemClass... itemClasses) {
+        this.random = random;
+        this.scanner = scanner;
+        this.commonItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Common")).toList();
+        this.uncommonItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Uncommon")).toList();
+        this.rareItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Rare")).toList();
+        this.epicItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Epic")).toList();
     }
 
-    public static void calculateDropChance(int dropChance, Scanner scanner){
-        int randomNumber = random.nextInt(101); 
-        if(randomNumber <= dropChance) {
-            pickItem(scanner);
-            
-        }
+    public boolean calculateDropChance(int dropChance){
+        int randomNumber = random.nextInt(101);
+        return randomNumber <= dropChance;
     }
 
-    public static void pickItem(Scanner scanner){
+    public ItemClass pickItem(){
         int randomNum = random.nextInt(101);
             if(randomNum <= 50){
-                dropItem(scanner, commonItems);
-            }else if (randomNum <= 75 && randomNum >= 51){
-                dropItem(scanner, uncommonItems);
-            }else if(randomNum <= 90 && randomNum >= 76){
-                dropItem(scanner, rareItems);
-            } else if(randomNum <= 100 && randomNum >= 91){
-                dropItem(scanner, epicItems);
+                return dropItem(commonItems);
+            }else if (randomNum <= 75){
+                return dropItem(uncommonItems);
+            }else if(randomNum <= 90){
+                return dropItem(rareItems);
+            } else {
+                return dropItem(epicItems);
             }
     }
 
-    public static ItemClass pickRandomItem(List<ItemClass> items){
+    public ItemClass pickRandomItem(List<ItemClass> items){
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("List must not be null or empty");
         }
-        
+
         int randomIndex = random.nextInt(items.size());
         return items.get(randomIndex);
     }
 
-    public static void dropItem(Scanner scanner, List<ItemClass> items){
+    public ItemClass dropItem(List<ItemClass> items){
         ItemClass droppedItem = pickRandomItem(items);
         Main.typewriter("Item: " + droppedItem.getName() + "\n"
             + "Description: " + droppedItem.getDescription() + "\n");
-        pickUpItemOption(scanner, droppedItem);
-        
+        return pickUpItemOption(droppedItem);
     }
 
-    public static void pickUpItemOption(Scanner scanner, ItemClass item){
-        Main.typewriter("Pick up item? \n" + 
-            "1. Yes \n" + 
-            "2. No \n");
+    public ItemClass pickUpItemOption(ItemClass item){
+        Main.typewriter("""
+                Pick up item?\s
+                1. Yes\s
+                2. No\s
+                """);
         String playerInpuString = scanner.nextLine().toLowerCase();
-        droppedItemActionOptions(playerInpuString, scanner, item);
+        return droppedItemActionOptions(playerInpuString, scanner, item);
     }
 
-    public static void droppedItemActionOptions(String option, Scanner scanner, ItemClass item){
+    public static ItemClass droppedItemActionOptions(String option, Scanner scanner, ItemClass item){
         if(option.equals("1") || option.equals("one") || option.equals("yes")){
-            item.pickUpItem(PlayerManager.getPlayer());
+            return item;
         }else if(option.equals("2") || option.equals("two") || option.equals("no")){
-            Main.typewriter("Your loss \n");
+            return null;
         }else {
-            Main.typewriter("Please input a valied option \n");
+            Main.typewriter("Please input a valid option \n");
             String playerInpuString = scanner.nextLine().toLowerCase();
-            droppedItemActionOptions(playerInpuString, scanner, item);
+            return droppedItemActionOptions(playerInpuString, scanner, item);
         }
     }
 }

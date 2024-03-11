@@ -1,101 +1,66 @@
 package com.beantastic.items;
 
-import com.beantastic.Main;
-import com.beantastic.player.Player;
+import com.beantastic.stats.StatBlock;
+import com.beantastic.stats.StatBlockable;
 
-public class ItemClass {
-    private String name;
-    private String description;
-    private String quality;
-    private String affectedFeild;
-    private String rarity;
-    private int value;
+public class ItemClass  implements StatBlockable {
+    private final String name;
+    private final String description;
+    private final StatBlock statBlock;
+    private final String rarity;
 
-    //add logic for items that affect multiple feilds 
-    public void setItem(String name, String description, String quality, String affectedFeild, int value, String rarity){
+    //add logic for items that affect multiple fields
+    public ItemClass(String name, String description, StatBlock statBlock, String rarity){
         this.name = name;
         this.description = description;
-        this.quality = quality;
-        this.affectedFeild = affectedFeild;
-        this.value = value;
+        this.statBlock = statBlock;
         this.rarity = rarity;
-    }
-
-    //NAME
-    public void setName(String name){
-        this.name = name;
     }
 
     public String getName(){
         return name;
     }
 
-    //DESCRIPTION
-    public void setDescription(String description){
-        this.description = description;
-    }
-
     public String getDescription(){
         return description;
     }
 
-    //QUALITY
-    public void setQuality(String quality){
-        this.quality = quality;
+    public boolean checkItemGood(){
+        return statBlock.rizz() + statBlock.defense() + statBlock.health() + statBlock.rizz() >= 0;
     }
 
-    public String getQuality(){
-        return quality;
+    public String pickUpItem(){
+        String details = "";
+        if (this.health() != 0) details += "Health: " + (this.health() > 0 ? "+" : "") + this.health() + "\n";
+        if (this.damage() != 0)  details += "Damage: " + (this.damage() > 0 ? "+" : "") + this.damage() + "\n";
+        if (this.defense() != 0)  details += "Defense: " + (this.defense() > 0 ? "+" : "") + this.defense() + "\n";
+        if (this.rizz() != 0)  details += "Rizz: " + (this.rizz() > 0 ? "+" : "") + this.rizz() + "\n";
+        return  details;
     }
 
-    //AFFECTED FEILD 
-    public void setAffectedFeild(String affectedFeild){
-        this.affectedFeild = affectedFeild;
-    }
 
-    public String getAffectedFeild(){
-        return affectedFeild;
-    }
-
-    //VALUE
-    public void setValue(int value){
-        this.value = value;
-    }
-
-    public int getValue(){
-        return value;
-    }
-
-    public boolean checkItemType(){
-        if(quality.equals("bad")) {
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    public void pickUpItem(Player player){
-        switch (affectedFeild.toLowerCase()) {
-            case "health":
-                player.modifyHealth(value, checkItemType());
-                Main.typewriter("Health: " + player.getHealth());
-                break;
-            case "damage":
-                player.modifyDamage(value, checkItemType());
-                Main.typewriter("Damage: " + player.getDamage());
-                break;
-            case "defense":
-                player.modifyDefense(value, checkItemType());
-                Main.typewriter("Defense: " + player.getDefense());
-                break;
-            case "rizz":
-                player.modifyRizz(value, checkItemType());
-                Main.typewriter("Rizz: " + player.getRizz());
-                break;
-        }
-    }
 
     public String getRarity(){
         return rarity;
+    }
+
+    @Override
+    public int health() {
+        return statBlock.health();
+    }
+
+    @Override
+    public int defense() {
+        return statBlock.defense();
+    }
+
+    @Override
+    public int damage() {
+        return statBlock.damage();
+    }
+
+    @Override
+    public int rizz() {
+        return statBlock.rizz();
     }
 }

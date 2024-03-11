@@ -1,76 +1,42 @@
 package com.beantastic.player;
 
-public class PlayerClass {
-    private String className;
-    private String classDiscription;
-    private int health;
-    private int defense; 
-    private int damage; 
-    private int rizz;
+import com.beantastic.stats.StatBlock;
+import com.beantastic.stats.StatBlockable;
 
-//SETTERS\\
-    public void setClass(String className, String classDiscription, int health, int defense, int damage, int rizz){
+public class PlayerClass implements StatBlockable {
+    private final String className;
+    private final String classDescription;
+    private final StatBlock statBlock;
+
+    public PlayerClass(String className, String classDescription, StatBlock statBlock){
         this.className = className;
-        this.classDiscription = classDiscription;
-        this.health = health;
-        this.defense = defense;
-        this.damage = damage;
-        this.rizz = rizz;
+        this.classDescription = classDescription;
+        this.statBlock = statBlock;
     }
-
-    public void setClass(String className, String classDiscription){
-        this.className = className;
-        this.classDiscription = classDiscription;
-    }
-
-    public void setName(String className){
-        this.className = className;
-    }
-
-    public void setDiscription(String classDiscription){
-        this.classDiscription = classDiscription;
-    }
-
-    public void setHealth(int health){
-        this.health = health;
-    }
-
-    public void setDefense(int defense){
-        this.defense = defense;
-    }
-
-    public void setDamage(int damage){
-        this.damage = damage;
-    }
-
-    public void setRizz(int rizz){
-        this.rizz = rizz;
-    }
-
 
 //GETTERS\\
-    public String getname(){
+    public String getName(){
         return className;
     }
 
-    public String getDiscription(){
-        return classDiscription;
+    public String getDescription(){
+        return classDescription;
     }
 
-    public int getHealth(){
-        return health;
+    public int health(){
+        return statBlock.health();
     }
 
-    public int getDefense(){
-        return defense;
+    public int defense(){
+        return statBlock.defense();
     }
 
-    public int getDamage(){
-        return damage;
+    public int damage(){
+        return statBlock.damage();
     }
 
-    public int getRizz(){
-        return rizz;
+    public int rizz(){
+        return statBlock.rizz();
     }
 
 }

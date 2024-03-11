@@ -6,107 +6,76 @@ import java.util.Scanner;
 import com.beantastic.Main;
 
 public class PlayerManager {
-    private static Player player;
+    private final List<PlayerClass> classList;
+    private final Scanner scanner;
 
-    public static Player getPlayer(){
+    public static Player getPlayer() { // TODO remove dummy once static migration is done
+        return null;
+    }
+
+    public PlayerManager (Scanner scanner, List<PlayerClass> classList) {
+        this.scanner = scanner;
+        this.classList = classList;
+    }
+
+    public Player createPlayer(){
+        Main.typewriter("\nCreate your bean: \n\n");
+        PlayerMaker playerMaker = new PlayerMaker();
+        Player player = playerMaker.setName(checkName(null))
+                .setPlayerClass(pickClass())
+                .createPlayer();
+        displayCharacter(player);
         return player;
     }
 
-    public static void resetPlayer(){
-        player = null; 
-    }
-
-    public static void createPlayer(Scanner scanner, List<PlayerClass> classList){
-        Main.typewriter("\nCreate your bean: \n\n");
-        player = new Player();
-        Main.typewriter("Please enter a name \n");
-        String playerName = scanner.nextLine();
-        checkName(playerName, scanner);
-        
-        displayEachClassOption(PlayerClassManager.getClassList());
-        Main.typewriter("\n\nPick a class");
-        pickClass(scanner, classList);
-
-        displayCharacter();
-        
-    }
-
-    public static void checkName(String name, Scanner scanner){
+    private String checkName(String name){
+        if (name == null || name.isEmpty()){
+            Main.typewriter("Please enter a name \n");
+            String playerName = scanner.nextLine();
+            return checkName(playerName);
+        }
         if(name.length() > 10){
             Main.typewriter("Name is too long!");
-            String playerName = scanner.nextLine();
-            checkName(playerName, scanner);
-        }else{
-            player.setName(name);
+            return checkName(null);
+        } else {
+            return  name;
         }
     }
 
-    public static void displayEachClassOption(List<PlayerClass> classList) {
+    private void displayEachClassOption() {
         Main.typewriter("Pick your class \n");
         classList.stream()
-                 .map((PlayerClass playerClass) -> "Name: " + playerClass.getname() + "\nDescription: " + playerClass.getDiscription() + "\n-------------------------------------------" )
+                 .map((PlayerClass playerClass) -> "Name: " + playerClass.getName() + "\nDescription: " + playerClass.getDescription() + "\n-------------------------------------------" )
                  .forEach(System.out::println);
     }
-    
-    public static void pickClass(Scanner scanner, List<PlayerClass> classList){
+
+    private PlayerClass pickClass(){
+        displayEachClassOption();
+        Main.typewriter("\n\nPick a class");
         String playerInpuString = scanner.nextLine().toLowerCase();
-        if(playerInpuString.equals("1") || playerInpuString.equals("one") 
-            || playerInpuString.equals(PlayerClassManager.getClassList().get(0).getname().toLowerCase())){
-
-            PlayerManager.getPlayer().setPlayer(classList.get(0).getname(), 
-                                                classList.get(0).getHealth(), 
-                                                classList.get(0).getDefense(), 
-                                                classList.get(0).getDamage(), 
-                                                classList.get(0).getRizz());
-
-        }else if(playerInpuString.equals("2") || playerInpuString.equals("two") 
-            || playerInpuString.equals(PlayerClassManager.getClassList().get(1).getname().toLowerCase())){
-
-            PlayerManager.getPlayer().setPlayer(classList.get(1).getname(), 
-                                                classList.get(1).getHealth(), 
-                                                classList.get(1).getDefense(), 
-                                                classList.get(1).getDamage(), 
-                                                classList.get(1).getRizz());
-
-        } else if (playerInpuString.equals("3") || playerInpuString.equals("three") 
-            || playerInpuString.equals(PlayerClassManager.getClassList().get(2).getname().toLowerCase())){
-            
-            PlayerManager.getPlayer().setPlayer(classList.get(2).getname(), 
-                                                classList.get(2).getHealth(), 
-                                                classList.get(2).getDefense(), 
-                                                classList.get(2).getDamage(), 
-                                                classList.get(2).getRizz());
-
-        } else if (playerInpuString.equals("4") || playerInpuString.equals("four") 
-            || playerInpuString.equals(PlayerClassManager.getClassList().get(3).getname().toLowerCase())){
-            
-            PlayerManager.getPlayer().setPlayer(classList.get(2).getname(), 
-                                                classList.get(2).getHealth(), 
-                                                classList.get(2).getDefense(), 
-                                                classList.get(2).getDamage(), 
-                                                classList.get(2).getRizz());
-
-        }else if (playerInpuString.equals("5") || playerInpuString.equals("five") 
-            || playerInpuString.equals(PlayerClassManager.getClassList().get(4).getname().toLowerCase())){
-            
-            PlayerManager.getPlayer().setPlayer(classList.get(2).getname(), 
-                                                classList.get(2).getHealth(), 
-                                                classList.get(2).getDefense(), 
-                                                classList.get(2).getDamage(), 
-                                                classList.get(2).getRizz());
-
+        if(playerInpuString.equals("1") || playerInpuString.equals("one")
+            || playerInpuString.equals(classList.get(0).getName().toLowerCase())){
+            return classList.getFirst();
+        }else if(playerInpuString.equals("2") || playerInpuString.equals("two")
+            || playerInpuString.equals(classList.get(1).getName().toLowerCase())){
+            return classList.get(1);
+        } else if (playerInpuString.equals("3") || playerInpuString.equals("three")
+            || playerInpuString.equals(classList.get(2).getName().toLowerCase())){
+            return classList.get(2);
+        } else if (playerInpuString.equals("4") || playerInpuString.equals("four")
+            || playerInpuString.equals(classList.get(3).getName().toLowerCase())){
+            return classList.get(2);
+        }else if (playerInpuString.equals("5") || playerInpuString.equals("five")
+            || playerInpuString.equals(classList.get(4).getName().toLowerCase())){
+            return classList.get(2);
         }else{
-                Main.typewriter("Please pick a valid class");
-                pickClass(scanner, classList);
+                Main.typewriter("That's not a valid class");
+                return pickClass();
         }
     }
 
-    public static void displayCharacter(){
-        Main.typewriter("\nName: " + player.getName() + "\n\n" + 
-            "Class: " + player.getPlayerClass() + "\n\n" + 
-            "Health: " + player.getHealth() + "\n\n" + 
-            "Defense: " + player.getDefense() + "\n\n" + 
-            "Rizz: " + player.getRizz() + "\n---------------------------------------------------\n\n");
+    private static void displayCharacter(Player player){
+        Main.typewriter(player.toString());
     }
 
 
