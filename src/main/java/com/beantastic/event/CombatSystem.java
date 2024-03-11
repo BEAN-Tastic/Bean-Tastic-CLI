@@ -89,7 +89,7 @@ public class CombatSystem {
             return rizzOptions();
         }else{
             //you cant rizz up the enemy, and they do 1/2 damage
-            Main.typewriter("Your rizz was not enough" + enemy.getName() + " attacks and deals " + enemy.damage()/ 2);
+            Main.typewriter("Your rizz was not enough, " + enemy.getName() + " retaliates in disgust and deals " + enemy.damage()/ 2);
             player.takeDamage(enemy.damage()/ 2);
             return combatOptions();
         }

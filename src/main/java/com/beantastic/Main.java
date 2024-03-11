@@ -19,6 +19,20 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
 
+    private final Random random;
+    private final Scanner scanner;
+    private final EnemyManager enemyManager;
+    private final ItemManager itemManager;
+    private final PlayerManager playerManager;
+
+    public Main(Random random, Scanner scanner, EnemyManager enemyManager, ItemManager itemManager, PlayerManager playerManager) {
+        this.random = random;
+        this.scanner = scanner;
+        this.enemyManager = enemyManager;
+        this.itemManager = itemManager;
+        this.playerManager = playerManager;
+    }
+
 
     public static void main(String[] args) {
         Random random = new Random();
@@ -30,8 +44,12 @@ public class Main {
         ItemManager itemManager = addItems(random, scanner);
         PlayerManager playerManager = new PlayerManager(scanner, playerClassManager.getClassList());
 
+        Main main = new Main(random, scanner, enemyManager, itemManager, playerManager);
         // START GAME
-        startGame(random, scanner, itemManager, playerManager, enemyManager);
+        boolean play;
+        do {
+            play = main.startGame();
+        } while (play);
     }
 
     //TEMP DATA INSERTION\\
@@ -75,7 +93,7 @@ public class Main {
                         "A haunted hamburger possessed by vengeful spirits."));
     }
 
-    public static void startGame(Random random, Scanner scanner, ItemManager itemManager, PlayerManager playerManager, EnemyManager enemyManager){
+    public boolean startGame(){
         System.out.println("""
                   ____                         _            _   _                    _                 _                  \s
                  |  _ \\                       | |          | | (_)          /\\      | |               | |                 \s
@@ -86,16 +104,16 @@ public class Main {
                 """);
 
         System.out.println("\n\n");
-        if (!getStartInput(scanner)) {
+        if (!getStartInput()) {
             typewriter("What a loser! \n");
-            return;
+            return false;
         }
         Player player = playerManager.createPlayer();
         PathManager pathManager = new PathManager(player, enemyManager, itemManager, random, scanner, 3);
-        gameOver(pathManager.generatePath(), scanner);
+        return gameOver(pathManager.generatePath());
     }
 
-    public static boolean getStartInput(Scanner scanner) {
+    private boolean getStartInput() {
         typewriter("Do you want to play the game? \n");
         typewriter("1. Yes \n");
         typewriter("2. No \n");
@@ -106,7 +124,7 @@ public class Main {
             return false;
         } else {
             typewriter("Please input a valid answer \n");
-            return getStartInput(scanner);
+            return getStartInput();
         }
     }
 
@@ -124,65 +142,27 @@ public class Main {
         System.out.println(); // Move to the next line after printing the text
     }
 
-    public static void gameOver(boolean won, Scanner scanner){
-        if(won){
+    private boolean gameOver(boolean won){
+        if (won) {
             typewriter("Your are the mightiest Bean there ever was!");
-            System.out.println("""
+        } else {
+            typewriter("Better luck next time!");
+        }
+
+        System.out.println("""
                       ____    _    __  __ _____    _____     _______ ____   \s
                      / ___|  / \\  |  \\/  | ____|  / _ \\ \\   / / ____|  _ \\  \s
                     | |  _  / _ \\ | |\\/| |  _|   | | | \\ \\ / /|  _| | |_) | \s
                     | |_| |/ ___ \\| |  | | |___  | |_| |\\ V / | |___|  _ < _\s
                      \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_(_)""");
-
-            typewriter("""
+        typewriter("""
                     Play again?
 
                     1. Yes!
 
                     2. No!""");
-            String restartOption = scanner.nextLine().toLowerCase();
+        String restartOption = scanner.nextLine().toLowerCase();
 
-            if(restartOption.equals("1") || restartOption.equals("one") || restartOption.equals("yes")){
-                restart();
-            }
-
-            //game finished
-
-        }else{
-            typewriter("Better luck next time!");
-            System.out.println("""
-                      ____    _    __  __ _____    _____     _______ ____   \s
-                     / ___|  / \\  |  \\/  | ____|  / _ \\ \\   / / ____|  _ \\  \s
-                    | |  _  / _ \\ | |\\/| |  _|   | | | \\ \\ / /|  _| | |_) | \s
-                    | |_| |/ ___ \\| |  | | |___  | |_| |\\ V / | |___|  _ < _\s
-                     \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_(_)""");
-
-            typewriter("""
-                    Restart game?
-
-                    1. Yes!
-
-                    2. No!""");
-            String restartOption = scanner.nextLine().toLowerCase();
-
-            if(restartOption.equals("1") || restartOption.equals("one") || restartOption.equals("yes")){
-                restart();
-            }
-
-            //game finished
-
-        }
-    }
-
-    public static void restart(){
-        Random random = new Random();
-        Scanner scanner = new Scanner(System.in);
-        //TEMP DATA FOR NOW
-        EnemyManager enemyManager = addEnemies(random);
-        PlayerClassManager playerClassManager = addClass();
-        ItemManager itemManager = addItems(random, scanner);
-        PlayerManager playerManager = new PlayerManager(scanner, playerClassManager.getClassList());
-
-        startGame(random, scanner, itemManager, playerManager, enemyManager);
+        return restartOption.equals("1") || restartOption.equals("one") || restartOption.equals("yes");
     }
 }
