@@ -2,7 +2,7 @@ package com.beantastic.items;
 
 import java.util.*;
 
-import com.beantastic.Main;
+import com.beantastic.logging.Logger;
 
 public class ItemManager {
     private final List<ItemClass> commonItems;
@@ -10,11 +10,14 @@ public class ItemManager {
     private final List<ItemClass> rareItems;
     private final List<ItemClass> epicItems;
 
+    private final Logger logger;
+
     private final Random random;
 
     private final Scanner scanner;
 
-    public ItemManager (Random random, Scanner scanner, ItemClass... itemClasses) {
+    public ItemManager (Logger logger, Random random, Scanner scanner, ItemClass... itemClasses) {
+        this.logger = logger;
         this.random = random;
         this.scanner = scanner;
         this.commonItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Common")).toList();
@@ -52,13 +55,13 @@ public class ItemManager {
 
     private ItemClass dropItem(List<ItemClass> items){
         ItemClass droppedItem = pickRandomItem(items);
-        Main.typewriter("Item: " + droppedItem.getName() + "\n"
+        logger.writeln("Item: " + droppedItem.getName() + "\n"
             + "Description: " + droppedItem.getDescription() + "\n");
         return droppedItem;
     }
 
     public ItemClass pickUpItemOption(ItemClass item){
-        Main.typewriter("""
+        logger.writeln("""
                 Pick up item?\s
                 1. Yes\s
                 2. No\s
@@ -73,7 +76,7 @@ public class ItemManager {
         }else if(option.equals("2") || option.equals("two") || option.equals("no")){
             return null;
         }else {
-            Main.typewriter("Please input a valid option \n");
+            logger.writeln("Please input a valid option \n");
             return pickUpItemOption(item);
         }
     }

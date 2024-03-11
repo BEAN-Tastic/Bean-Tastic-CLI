@@ -2,12 +2,12 @@ package com.beantastic;
 
 import java.util.Random;
 import java.util.Scanner;
-import java.util.stream.IntStream;
 
 import com.beantastic.enemies.Enemy;
 import com.beantastic.enemies.EnemyManager;
 import com.beantastic.items.ItemClass;
 import com.beantastic.items.ItemManager;
+import com.beantastic.logging.Logger;
 import com.beantastic.path.PathManager;
 import com.beantastic.player.Player;
 import com.beantastic.player.PlayerClass;
@@ -15,18 +15,19 @@ import com.beantastic.player.PlayerClassManager;
 import com.beantastic.player.PlayerManager;
 import com.beantastic.stats.StatBlock;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 public class Main {
 
     private final Random random;
+
+    private final Logger logger;
     private final Scanner scanner;
     private final EnemyManager enemyManager;
     private final ItemManager itemManager;
     private final PlayerManager playerManager;
 
-    public Main(Random random, Scanner scanner, EnemyManager enemyManager, ItemManager itemManager, PlayerManager playerManager) {
+    public Main(Random random, Logger logger, Scanner scanner, EnemyManager enemyManager, ItemManager itemManager, PlayerManager playerManager) {
         this.random = random;
+        this.logger = logger;
         this.scanner = scanner;
         this.enemyManager = enemyManager;
         this.itemManager = itemManager;
@@ -37,14 +38,15 @@ public class Main {
     public static void main(String[] args) {
         Random random = new Random();
         Scanner scanner = new Scanner(System.in);
+        Logger logger = new Logger(System.out);
 
         //TEMP DATA FOR NOW
         EnemyManager enemyManager = addEnemies(random);
         PlayerClassManager playerClassManager = addClass();
-        ItemManager itemManager = addItems(random, scanner);
-        PlayerManager playerManager = new PlayerManager(scanner, playerClassManager.getClassList());
+        ItemManager itemManager = addItems(logger, random, scanner);
+        PlayerManager playerManager = new PlayerManager(logger, scanner, playerClassManager.getClassList());
 
-        Main main = new Main(random, scanner, enemyManager, itemManager, playerManager);
+        Main main = new Main(random, logger, scanner, enemyManager, itemManager, playerManager);
         // START GAME
         boolean play;
         do {
@@ -72,8 +74,9 @@ public class Main {
                         new StatBlock(5, 3, 2, 2)));
     }
 
-    public static ItemManager addItems(Random random, Scanner scanner){
+    public static ItemManager addItems(Logger logger, Random random, Scanner scanner){
         return new ItemManager(
+                logger,
                 random,
                 scanner,
                 new ItemClass("SHOE", "HOT PINK HIGH HEEL", new StatBlock(0, 0, 0, 1), "Common"),
@@ -94,73 +97,63 @@ public class Main {
     }
 
     public boolean startGame(){
-        System.out.println("""
+        logger.println("""
                   ____                         _            _   _                    _                 _                  \s
                  |  _ \\                       | |          | | (_)          /\\      | |               | |                 \s
                  | |_) | ___  __ _ _ __ ______| |_ __ _ ___| |_ _  ___     /  \\   __| |_   _____ _ __ | |_ _   _ _ __ ___ \s
                  |  _ < / _ \\/ _` | '_ \\______| __/ _` / __| __| |/ __|   / /\\ \\ / _` \\ \\ / / _ \\ '_ \\| __| | | | '__/ _ \\\s
                  | |_) |  __/ (_| | | | |     | || (_| \\__ \\ |_| | (__   / ____ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/\s
                  |____/ \\___|\\__,_|_| |_|      \\__\\__,_|___/\\__|_|\\___| /_/    \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\
+                
                 """);
-
-        System.out.println("\n\n");
         if (!getStartInput()) {
-            typewriter("What a loser! \n");
+            logger.writeln("What a loser!");
             return false;
         }
         Player player = playerManager.createPlayer();
-        PathManager pathManager = new PathManager(player, enemyManager, itemManager, random, scanner, 3);
+        PathManager pathManager = new PathManager(player, enemyManager, itemManager, random, logger, scanner, 3);
         return gameOver(pathManager.generatePath());
     }
 
     private boolean getStartInput() {
-        typewriter("Do you want to play the game? \n");
-        typewriter("1. Yes \n");
-        typewriter("2. No \n");
+        logger.writeln("""
+                Do you want to play the game?
+                
+                1. Yes
+                
+                2. No
+                """);
         String playerInputString = scanner.nextLine().toLowerCase();
         if (playerInputString.equals("1") || playerInputString.equals("one") || playerInputString.equals("yes") ) {
             return true;
         } else if (playerInputString.equals("2") || playerInputString.equals("two") || playerInputString.equals("no")) {
             return false;
         } else {
-            typewriter("Please input a valid answer \n");
+            logger.writeln("Please input a valid answer");
             return getStartInput();
         }
     }
 
-    public static void typewriter(String text) {
-        IntStream.range(0, text.length())
-                 .mapToObj(text::charAt)
-                 .forEachOrdered(c -> {
-                     System.out.print(c);
-                     try {
-                         Thread.sleep(ThreadLocalRandom.current().nextInt(50, 150 +1)); // Adjust the delay as needed
-                     } catch (InterruptedException e) {
-                         e.printStackTrace();
-                     }
-                 });
-        System.out.println(); // Move to the next line after printing the text
-    }
-
     private boolean gameOver(boolean won){
         if (won) {
-            typewriter("Your are the mightiest Bean there ever was!");
+            logger.writeln("Your are the mightiest Bean there ever was!");
         } else {
-            typewriter("Better luck next time!");
+            logger.writeln("Better luck next time!");
         }
 
-        System.out.println("""
+        logger.println("""
                       ____    _    __  __ _____    _____     _______ ____   \s
                      / ___|  / \\  |  \\/  | ____|  / _ \\ \\   / / ____|  _ \\  \s
                     | |  _  / _ \\ | |\\/| |  _|   | | | \\ \\ / /|  _| | |_) | \s
                     | |_| |/ ___ \\| |  | | |___  | |_| |\\ V / | |___|  _ < _\s
                      \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_(_)""");
-        typewriter("""
+        logger.println("""
                     Play again?
 
                     1. Yes!
 
-                    2. No!""");
+                    2. No!
+                    """);
         String restartOption = scanner.nextLine().toLowerCase();
 
         return restartOption.equals("1") || restartOption.equals("one") || restartOption.equals("yes");
