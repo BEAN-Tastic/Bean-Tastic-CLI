@@ -1,17 +1,16 @@
 package com.beantastic.player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerClassManager {
-    private static List<PlayerClass> classList = new ArrayList<>();
 
-
-    public static List<PlayerClass> getClassList(){
-        return classList;
+    private final List<PlayerClass> classList;
+    public PlayerClassManager (PlayerClass... playerClasses ){
+        this.classList = List.of(playerClasses);
     }
 
-    public static void addClassToList(PlayerClass playerClass){
-        classList.add(playerClass);
+
+    public List<PlayerClass> getClassList(){
+        return classList;
     }
 }

@@ -1,82 +1,43 @@
 package com.beantastic.enemies;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 public class EnemyManager {
-    //store all the enmies in here 
-    private static Enemy currentEnemy;
-    private static List<Enemy> easyEnemies = new ArrayList<>();
-    private static List<Enemy> mediumEnemies = new ArrayList<>();
-    private static List<Enemy> hardEnemies = new ArrayList<>();
-    private static Random random = new Random();
+    private final List<Enemy> easyEnemies;
+    private final List<Enemy> mediumEnemies;
+    private final List<Enemy> hardEnemies;
+    private final Random random;
 
-    public static void setCurrentEnemy(int hardnessLevel){
-        switch (hardnessLevel) {
-            case 1:
-                currentEnemy = getRandomEasyEnemy();
-                break;
-            case 2:
-                currentEnemy = getRandomMediumEnemy();
-                break;
-            case 3:
-                currentEnemy = getRandomHardEnemy();
-                break;
-        }
+    public EnemyManager(Random random, Enemy... enemies){
+        this.random = random;
+        this.easyEnemies = Arrays.stream(enemies).filter(enemy -> enemy.getDifficulty().equals("Easy")).toList();
+        this.mediumEnemies = Arrays.stream(enemies).filter(enemy -> enemy.getDifficulty().equals("Medium")).toList();
+        this.hardEnemies = Arrays.stream(enemies).filter(enemy -> enemy.getDifficulty().equals("Hard")).toList();
     }
 
-    public static Enemy getCurrentEnemy(){
-        return currentEnemy;
+    public Enemy getEnemy(int hardnessLevel){
+        return switch (hardnessLevel) {
+            case 1 -> getRandomEasyEnemy();
+            case 2 -> getRandomMediumEnemy();
+            case 3 -> getRandomHardEnemy();
+            default -> null;
+        };
     }
 
-    public static Enemy getRandomEasyEnemy(){
+    private Enemy getRandomEasyEnemy(){
         int randomIndex = random.nextInt(easyEnemies.size());
         return easyEnemies.get(randomIndex);
     }
 
-    public static Enemy getRandomMediumEnemy(){
+    private Enemy getRandomMediumEnemy(){
         int randomIndex = random.nextInt(mediumEnemies.size());
         return mediumEnemies.get(randomIndex);
     }
 
-    public static Enemy getRandomHardEnemy(){
+    private Enemy getRandomHardEnemy(){
         int randomIndex = random.nextInt(hardEnemies.size());
         return hardEnemies.get(randomIndex);
     }
-    
-    public static void setCurrentEnemeyToNull(){
-        currentEnemy = null;
-    }
-
-    public static void addEasyEnemy(Enemy enemy){
-        easyEnemies.add(enemy);
-        System.out.println(easyEnemies.get(0).getName());
-    }
-
-    public static void addMediumEnemy(Enemy enemy){
-        mediumEnemies.add(enemy);
-        System.out.println(mediumEnemies.get(0).getName());
-    }
-
-    public static void addHardEnemy(Enemy enemy){
-        hardEnemies.add(enemy);
-        System.out.println(hardEnemies.get(0).getName());
-    }
-
-    //creates an enemy object and adds it to the respect dificulty list
-    public void createEnemy(String name, int health, int damage, int requiredRizz, String difficulty, String attackDialogue, String description){
-        Enemy enemy = new Enemy();
-
-        enemy.setEnemy(name, health, damage, requiredRizz, difficulty, attackDialogue, description);
-
-        if (enemy.getDifficulty().equals("Easy")) {
-            addEasyEnemy(enemy);
-        } else if(enemy.getDifficulty().equals("Medium")){
-            addMediumEnemy(enemy);
-        }else if(enemy.getDifficulty().equals("Hard")){
-            addHardEnemy(enemy);
-        }
-    }
-
 }

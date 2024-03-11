@@ -1,95 +1,64 @@
 package com.beantastic.enemies;
 
-import java.util.Scanner;
+import com.beantastic.stats.StatBlock;
+import com.beantastic.stats.StatBlockable;
 
-import com.beantastic.Main;
-import com.beantastic.items.ItemManager;
+public class Enemy implements StatBlockable {
+    private final String name;
 
-public class Enemy{
-    private String name;
-    private int health;
-    private int damage;
-    private int requiredRizz;
-    private int modifier; 
-    private String difficulty; 
-    private String attackDialogue;
-    private String description;
+    private final StatBlock statBlock;
+    private int healthLost;
+    private final String difficulty;
+    private final String attackDialogue;
+    private final String description;
 
 
-    public void setEnemy(String name, int health, int damage, int requiredRizz, String difficulty, String attackDialogue, String description){
+    public Enemy (String name, StatBlock statBlock, String difficulty, String attackDialogue, String description) {
+        this.statBlock = statBlock;
         this.name = name;
-        this.health = health;
-        this.damage = damage;
-        this.requiredRizz = requiredRizz;
+        this.healthLost = 0;
         this.difficulty = difficulty;
         this.attackDialogue = attackDialogue;
         this.description = description;
-    }
-
-    //NAME
-    public void setName(String name){
-        this.name = name;
     }
 
     public String getName(){
         return name;
     }
 
-    //HEALTH 
-    public int getHealth(){
-        return health;
+    public int health(){
+        return this.statBlock.health() - healthLost;
     }
 
-    public void setHealth(int health){
-        this.health = health;
+    public int defense() {
+        return this.statBlock.health();
     }
 
     public void takeDamage(int damage){
-        health -= damage;
+        healthLost += damage;
     }
 
-    //DAMAGE
-    public int getDamange(){
-        return damage;
+    public boolean isDead() {
+        return healthLost >= this.statBlock.health();
     }
 
-    public void die(){
-        Main.typewriter("You successfully slayed " + name);
+    public int damage(){
+        return this.statBlock.damage();
     }
 
-    //RIZZ
-    public int getRizz(){
-        return requiredRizz;
+    public int rizz(){
+        return this.statBlock.rizz();
     }
 
-    public void setRizz(int rizz){
-        requiredRizz = rizz;
-    }
- 
-    //DIFFICULTY
     public String getDifficulty(){
         return difficulty;
     }
 
-    public void setDifficulty(String difficulty){
-        this.difficulty = difficulty;
-    }
-
-    //ATTACK DIALOGUE
-    public String getAttackDialgoue(){
+    public String getAttackDialogue(){
         return attackDialogue;
     }
-    
-    public void setAttackDialogue(String attackDialogue){
-        this.attackDialogue = attackDialogue;
-    }
 
-    //DESCRIPTION
     public String getDescription(){
         return description;
-    }
-
-    public void setDescription(String description){
-        this.description = description;
     }
 }

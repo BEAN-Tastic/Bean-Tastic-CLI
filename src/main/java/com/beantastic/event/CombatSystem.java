@@ -1,150 +1,157 @@
 package com.beantastic.event;
 
+import java.util.Random;
 import java.util.Scanner;
 
-import com.beantastic.Main;
-import com.beantastic.dialogue;
+import com.beantastic.logging.Logger;
+import com.beantastic.Dialogue;
 import com.beantastic.enemies.Enemy;
-import com.beantastic.enemies.EnemyManager;
+import com.beantastic.items.ItemClass;
 import com.beantastic.items.ItemManager;
-import com.beantastic.player.PlayerManager;
+import com.beantastic.player.Player;
 
 public class CombatSystem {
 
-    public static void startCombatEvent(Scanner scanner, int hardnessLevel){
-        EnemyManager.setCurrentEnemy(hardnessLevel);
-        Main.typewriter("A " + EnemyManager.getCurrentEnemy().getName() + " appears! \n" + EnemyManager.getCurrentEnemy().getDescription()); 
-        combatOptions(scanner);
+    private final Logger logger;
+
+    private final Scanner scanner;
+
+    private final Player player;
+
+    private final Enemy enemy;
+
+    private final ItemManager itemManager;
+
+    private final Dialogue dialogue;
+    public CombatSystem(Logger logger, Scanner scanner, Player player, Enemy enemy, ItemManager itemManager) {
+        this.logger = logger;
+        this.scanner = scanner;
+        this.player = player;
+        this.enemy = enemy;
+        this.itemManager = itemManager;
+        dialogue = new Dialogue(new Random(), player, enemy);
     }
 
-    public static void combatOptions(Scanner scanner){
-        Main.typewriter(dialogue.combatInputDilogue()); //gives players their options- attack, defend or rizz
+    public ItemClass doCombatEvent(){
+        logger.writeln("""
+                A %1$s appears!
+                %2$s
+                """.formatted(enemy.getName(), enemy.getDescription()));
+        return combatOptions();
+    }
+
+    private ItemClass combatOptions(){
+        logger.writeln(Dialogue.combatInputDialogue()); //gives players their options: attack, defend or rizz
         String playerInpuString = scanner.nextLine().toLowerCase();
-        checkCombatInput(playerInpuString, scanner); //checks to see what the player has selected 
+        return checkCombatInput(playerInpuString); //checks to see what the player has selected
     }
 
-    public static void checkCombatInput(String playerInputString, Scanner scanner) {
-        if (playerInputString.equals("1") || playerInputString.equals("one") || playerInputString.equals("attack") ) {
-            attack(scanner);
-        } else if (playerInputString.equals("2") || playerInputString.equals("two") || playerInputString.equals("defend")) {
-            defend(scanner);
-        } else if (playerInputString.equals("3") || playerInputString.equals("three") || playerInputString.equals("rizz")){
-            rizz(scanner);
-        }else {
-            Main.typewriter("Please input a valid option \n");
-            String newInputString = scanner.nextLine().toLowerCase();
-            checkCombatInput(newInputString, scanner);
-        }
-    }
-
-    public static void attack(Scanner scanner){
-        Enemy enemy =  EnemyManager.getCurrentEnemy();
-        Main.typewriter(dialogue.getAttackDialogue());
-        enemy.takeDamage(PlayerManager.getPlayer().getDamage());
-        Main.typewriter("\n\nYou deal " + PlayerManager.getPlayer().getDamage());
-       
-        if(enemy.getHealth() <= 0){
-            //enemy die 
-            enemy.die();
-            ItemManager.calculateDropChance(25, scanner);
-            EnemyManager.setCurrentEnemeyToNull();
-        }else{
-            //enemy attack 
-            Main.typewriter(EnemyManager.getCurrentEnemy().getName() + "health: " + EnemyManager.getCurrentEnemy().getHealth() +"\n------------\n\n");
-            PlayerManager.getPlayer().takeDamage(EnemyManager.getCurrentEnemy().getDamange());
-
-            Main.typewriter(enemy.getAttackDialgoue() + "\nDealing: " + enemy.getDamange() + " damage");
-
-            if(PlayerManager.getPlayer().getHealth() <= 0){
-                PlayerManager.getPlayer().die();
-            }else{
-                Main.typewriter("\nYour health: " + PlayerManager.getPlayer().getHealth() + "\n------------\n\n");
-                combatOptions(scanner);
+    private ItemClass checkCombatInput(String playerInputString) {
+        return switch (playerInputString) {
+            case "1", "one", "attack" -> attack();
+            case "2", "two", "defend" -> defend();
+            case "3", "three", "rizz" -> rizz();
+            default -> {
+                logger.writeln("Please input a valid option");
+                yield combatOptions();
             }
-        }
-
-        
-
-        
+        };
     }
 
-    public static void rizz(Scanner scanner){
-        Enemy enemy =  EnemyManager.getCurrentEnemy();
+    private ItemClass attack(){
+        logger.writeln(dialogue.getAttackDialogue());
+        enemy.takeDamage(player.damage());
+        logger.writeln("You deal " + player.damage());
 
-        Main.typewriter(dialogue.getRizzDialgoue());
+        if(enemy.isDead()){
+            logger.writeln(dialogue.getEnemyDeathDialogue());
+            return itemManager.calculateDropChance(100) ? itemManager.pickItem() : null;
+        }
 
-        if(PlayerManager.getPlayer().getRizz() > enemy.getRizz()){
-            // you can rizz up the enemy 
-            Main.typewriter("Your rizz is so high, no one can resist you not even " + enemy.getName() + "\n"
-                + "Some might even call you the Rizzard \n"
-                + "\n1. Rizz again!" 
-                + "\n2. Leave " + EnemyManager.getCurrentEnemy().getName() + " be");
-            
-            //item logic here
+        //enemy attack
+        logger.writeln(enemy.getName());
+        logger.writeln("Health: " + enemy.health());
+        logger.writeln("------------");
+        player.takeDamage(enemy.damage());
+
+        logger.writeln(enemy.getAttackDialogue());
+        logger.writeln("Dealing: " + enemy.damage() + " damage");
+
+        if(!player.isDead()) {
+            logger.writeln("Your health: " + player.health());
+            logger.writeln("------------");
+            return combatOptions();
+        }
+        return null;
+
+    }
+
+    private ItemClass rizz(){
+
+        logger.writeln(dialogue.getRizzDialogue());
+
+        if(player.rizz() > enemy.rizz()){
+            // you can rizz up the enemy
+            logger.writeln("""
+                Your rizz is so high, no one can resist you not even %1$s
+                Some might even call you the Rizzard
+                
+                1. Rizz even more!
+                2. Leave %1$s be""".formatted(enemy.getName()));
+            return rizzOptions();
         }else{
-            //you cant rizz up the enemy and they do 1/2 dmaage 
-            Main.typewriter("Your rizz was not enough" + enemy.getName() + " attacks and deals " + enemy.getDamange()/ 2);
-            PlayerManager.getPlayer().takeDamage(enemy.getDamange()/ 2);
-            if(PlayerManager.getPlayer().getHealth() <= 0){
-                PlayerManager.getPlayer().die();
-            }else{
-                //you negated x amount of damage
-                Main.typewriter("You live to rizz another day!");
-                combatOptions(scanner);
-            }
+            //you cant rizz up the enemy, and they do 1/2 damage
+            logger.writeln("Your rizz was not high enough, " + enemy.getName() + " retaliates in disgust and deals " + enemy.damage()/ 2);
+            player.takeDamage(enemy.damage()/ 2);
+            return combatOptions();
         }
-
-        
     }
 
-    public void rizzOptions(Scanner scanner){
+    private ItemClass rizzOptions(){
         String option = scanner.nextLine().toLowerCase();
 
         if(option.equals("1") || option.equals("one") || option.equals("rizz again")){
-            Main.typewriter(dialogue.getRizzDialgoue());
-            Main.typewriter("\n\nThere is something in the air... " + EnemyManager.getCurrentEnemy().getName() + " starts to look irresistable" +
-                "\nYou might be the rizzard but they have captured your heart" +
-                "\nYou never expected this turn of events, but you decide to embrace it." +
-                "\n\nDays turn into weeks, and weeks into months. " + EnemyManager.getCurrentEnemy().getName() + " and you, have formed an unlikely bond." +
-                "\nYou spend your days exploring the kitchen floor, your abilities complementing each other perfectly." +
-                "\n\nOne day, as you sit under a potato peel scrap, " + EnemyManager.getCurrentEnemy().getName() + " turns to you and says," +
-                "\n'My dear " + PlayerManager.getPlayer().getName() + ", I never thought I could love a bean. But you've stolen my heart.'" +
-                "\nYou smile, knowing that your rizz worked better than you ever imagined." +
-                "\n\nAnd so, you and " + EnemyManager.getCurrentEnemy().getName() + " live happily ever after, a bean and an enemy, bound by rizz.");
-            PlayerManager.getPlayer().setIsRizzedUp(true);
-            Main.gameOver(true);
-
+            logger.writeln(dialogue.getRizzDialogue());
+            logger.writeln("""
+                There is something in the air... %1$s starts to look irresistible
+                You might be the rizzard but they have captured your heart
+                You never expected this turn of events, but you decide to embrace it.
+                
+                Days turn into weeks, and weeks into months. %1$s, and you have formed an unlikely bond.
+                You spend your days exploring the kitchen floor, your abilities complementing each other perfectly.
+                
+                One day, as you sit under a potato peel scrap, %1$s turns to you and says,
+                'My dear %2$s, I never thought I could love a bean. But you've stolen my heart.'
+                You smile, knowing that your rizz worked better than you ever imagined.
+                
+                And so, you and %1$s live happily ever after, a bean and an enemy, bound by rizz.""".formatted(enemy.getName(), player.getName()));
+            player.setIsRizzedUp(true);
+            return null;
         } else if(option.equals("2") || option.equals("two") || option.equals("leave")){
-            Main.typewriter("\n\nYou feel a wave of kindness wash over you, and you allow the ugly beast to retreat" + 
-                EnemyManager.getCurrentEnemy().getAttackDialgoue() + " scuttles away but leaves behing a gift\n");
-            ItemManager.pickItem(scanner);
+            logger.writeln("""
+                You feel a wave of kindness wash over you, and you allow the ugly beast to retreat %s scuttles away but leaves behind a gift
+                """.formatted(enemy.getName()));
+            return itemManager.pickItem();
         }else{
-            Main.typewriter("Please enter a valid input");
-            rizzOptions(scanner);
+            logger.writeln("Please enter a valid input");
+            return rizzOptions();
         }
     }
 
-    public static void defend(Scanner scanner){
-        Enemy enemy =  EnemyManager.getCurrentEnemy();
+    private ItemClass defend(){
 
-        if(PlayerManager.getPlayer().getDefense() > enemy.getDamange()){
-            //enemy does no damage you succefully blocked the attack
-            Main.typewriter("You succesfully blocked " + enemy.getName() + "'s attack!");
-            combatOptions(scanner);
-
-        }else{
-            PlayerManager.getPlayer().takeDamage(enemy.getDamange() - PlayerManager.getPlayer().getDefense());
-
-            if(PlayerManager.getPlayer().getHealth() <= 0){
-                PlayerManager.getPlayer().die();
-            }else{
-                //you negated x amount of damage
-                Main.typewriter("You negated " + (enemy.getDamange() - PlayerManager.getPlayer().getDefense()) + "damage \n" 
-                + "Your health: " + PlayerManager.getPlayer().getHealth());
-                combatOptions(scanner);
-            }
-            
+        if(player.defense() > enemy.damage()){
+            //enemy does no damage you successfully blocked the attack
+            logger.writeln("You successfully blocked " + enemy.getName() + "'s attack!");
+            return combatOptions();
         }
+        player.takeDamage(enemy.damage() - player.defense());
+        if(!player.isDead()){
+            logger.writeln("""
+            You negated %1$s damage
+            Your health: %2$s\s""".formatted((enemy.damage() - player.defense()), player.health()));
+            return combatOptions();
+        }
+        return null;
     }
-
 }
