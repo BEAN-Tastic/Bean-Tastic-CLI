@@ -29,7 +29,7 @@ public class ItemClass  implements StatBlockable {
         return statBlock.rizz() + statBlock.defense() + statBlock.health() + statBlock.rizz() >= 0;
     }
 
-    public String pickUpItem(){
+    public String pickUpDescription(){
         String details = "";
         if (this.health() != 0) details += "Health: " + (this.health() > 0 ? "+" : "") + this.health() + "\n";
         if (this.damage() != 0)  details += "Damage: " + (this.damage() > 0 ? "+" : "") + this.damage() + "\n";

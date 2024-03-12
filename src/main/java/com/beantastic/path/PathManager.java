@@ -41,8 +41,11 @@ public class PathManager {
         List<Runnable> stages = List.of(
                 () -> {
                     ItemClass item = new CombatSystem(logger, scanner, player, enemyManager.getEnemy(levelDifficulty), itemManager).doCombatEvent();
-                    if(item != null) item = itemManager.pickUpItemOption(item);
-                    if(item != null) player.addItem(item);
+                    if(item != null) {
+                        logger.println(item.pickUpDescription());
+                        logger.printBreak();
+                        player.addItem(item);
+                    }
                     levelDifficulty++;
                     },
                 () -> obstacleSystem.runObstacle(player)

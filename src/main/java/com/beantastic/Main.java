@@ -1,5 +1,6 @@
 package com.beantastic;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -8,7 +9,9 @@ import com.beantastic.enemies.EnemyManager;
 import com.beantastic.event.*;
 import com.beantastic.items.ItemClass;
 import com.beantastic.items.ItemManager;
+import com.beantastic.logging.ChoiceOption;
 import com.beantastic.logging.Logger;
+import com.beantastic.logging.UserChoice;
 import com.beantastic.path.PathManager;
 import com.beantastic.player.Player;
 import com.beantastic.player.PlayerClass;
@@ -120,22 +123,12 @@ public class Main {
     }
 
     private boolean getStartInput() {
-        logger.writeln("""
-                Do you want to play the game?
-                
-                1. Yes
-                
-                2. No
-                """);
-        String playerInputString = scanner.nextLine().toLowerCase();
-        if (playerInputString.equals("1") || playerInputString.equals("one") || playerInputString.equals("yes") ) {
-            return true;
-        } else if (playerInputString.equals("2") || playerInputString.equals("two") || playerInputString.equals("no")) {
-            return false;
-        } else {
-            logger.writeln("Please input a valid answer");
-            return getStartInput();
-        }
+        UserChoice<Boolean> choices = new UserChoice<>(scanner, logger, "Do you want to play the game?",
+                List.of(
+                        new ChoiceOption<>("Yes", () -> true),
+                        new ChoiceOption<>("No", () -> false)
+                ));
+        return choices.getChoice().outcome().get();
     }
 
     private boolean gameOver(boolean won){
@@ -150,16 +143,14 @@ public class Main {
                      / ___|  / \\  |  \\/  | ____|  / _ \\ \\   / / ____|  _ \\  \s
                     | |  _  / _ \\ | |\\/| |  _|   | | | \\ \\ / /|  _| | |_) | \s
                     | |_| |/ ___ \\| |  | | |___  | |_| |\\ V / | |___|  _ < _\s
-                     \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_(_)""");
-        logger.println("""
-                    Play again?
-
-                    1. Yes!
-
-                    2. No!
+                     \\____/_/   \\_\\_|  |_|_____|  \\___/  \\_/  |_____|_| \\_(_)
                     """);
-        String restartOption = scanner.nextLine().toLowerCase();
 
-        return restartOption.equals("1") || restartOption.equals("one") || restartOption.equals("yes");
+        UserChoice<Boolean> playAgain = new UserChoice<>(scanner, logger, "Play again?",
+                List.of(
+                        new ChoiceOption<>("Yes!", () -> true),
+                        new ChoiceOption<>("No!", () -> false)
+                ));
+        return playAgain.getChoice().outcome().get();
     }
 }

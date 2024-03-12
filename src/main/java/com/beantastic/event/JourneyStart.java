@@ -1,8 +1,11 @@
 package com.beantastic.event;
 
+import com.beantastic.logging.ChoiceOption;
 import com.beantastic.logging.Logger;
+import com.beantastic.logging.UserChoice;
 import com.beantastic.player.Player;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class JourneyStart implements Obstacle{
@@ -21,7 +24,7 @@ public class JourneyStart implements Obstacle{
 
     @Override
     public void run(Player player) {
-        logger.writeln("""
+        UserChoice<Void> choices = new UserChoice<>(scanner, logger,"""
                 You wake up finding yourself...
                 On the kitchen floor... No bean has ever ventured this low before, well not any self-respecting bean that is...
                 The kitchen counter looms above you, your home.
@@ -35,90 +38,48 @@ public class JourneyStart implements Obstacle{
                 The floor stretches out before you, mysterious and unfamiliar.
                 The journey back to the counter seems daunting, but staying on the floor is not an option.
                 What will you do?
-                """);
-
-        logger.writeln("""
-                1. Find a way back home
-
-                2. Panic!""");
-
-        pickPath(player);
-    }
-
-    private void pickPath(Player player){
-        String pathOption = scanner.nextLine().toLowerCase();
-
-        if(pathOption.equals("1") || pathOption.equals("one") || pathOption.equals("find a way back home")){
-            logger.writeln("""
-                    You move forward, looking for a way out
-                    
-                    1. Keep walking forward
-
-                    2. Look around""");
-            keepWalking(player);
-        } else if(pathOption.equals("2") || pathOption.equals("two") || pathOption.equals("panic") || pathOption.equals("panic!")){
-            panic(player);
-        }else {
-            logger.writeln("Please input a valid option");
-            pickPath(player);
-        }
+                """,
+                List.of(
+                        new ChoiceOption<>("Find a way back home", () -> {
+                            keepWalking();
+                            return null;
+                        }),
+                        new ChoiceOption<>("Panic!", () -> {
+                            panic(player);
+                            return null;
+                        })));
+        choices.getChoice().outcome().get();
     }
 
     private void panic(Player player){
-        logger.writeln("""
-                You start to panic...
-
-                1. Curl into a ball and hope for the best.
-
-                2. Fall to the floor and sob.
-
-                3. Panic more!
-                """);
-
-        panicOptions(player);
-
+        UserChoice<Void> choices = new UserChoice<>(scanner, logger, "You start to panic...",
+                List.of(
+                        new ChoiceOption<>("Curl into a ball and hope for the best.", () -> null),
+                        new ChoiceOption<>("Fall to the floor and sob.", () -> {
+                            logger.writeln("""
+                                You make so much noise crying you attract something...
+                                You hear it getting closer...
+                                And closer...
+                                """);
+                            combatSystem.doCombatEvent();
+                            return null;
+                        }),
+                        new ChoiceOption<>("Panic more!", () -> {
+                            logger.writeln("You panic so much you explode!");
+                            player.die();
+                            return null;
+                        })
+                ));
+        ChoiceOption<Void> choice = choices.getChoice();
+        choice.outcome().get();
     }
 
-    private void panicOptions(Player player){
-        String pathOption = scanner.nextLine().toLowerCase();
-
-        switch (pathOption) {
-            case "1", "one", "curl into a ball" -> {
-            }
-            case "2", "two", "sob" -> {
-                logger.writeln("""
-                        You make so much noise crying you attract something...
-                        You hear it getting closer...
-                        And closer...
-                        """);
-                combatSystem.doCombatEvent();
-            }
-            case "3", "three", "panic" -> {
-                logger.writeln("You panic so much you explode!");
-                player.die();
-            }
-            default -> {
-                logger.writeln("Please input a valid option");
-                panicOptions(player);
-            }
-        }
-    }
-
-    private void keepWalking(Player player){
-        String pathOption = scanner.nextLine().toLowerCase();
-
-        switch (pathOption) {
-            case "1", "one", "keep walking forward" -> {
-                //TODO: add some dialogue here for 1st path
-            }
-            case "2", "two", "look around" -> {
-                //TODO: add some dialogue here for 2nd path
-            }
-            default -> {
-                logger.writeln("Please input a valid option");
-                keepWalking(player);
-            }
-        }
-
+    private void keepWalking(){
+        UserChoice<Void> choices = new UserChoice<>(scanner, logger, "You move forward, looking for a way out",
+                List.of(
+                        new ChoiceOption<>("Keep walking forward.", () -> null),
+                        new ChoiceOption<>("Look around.", () -> null)
+                ));
+        choices.getChoice().outcome().get();
     }
 }

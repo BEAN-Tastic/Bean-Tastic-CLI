@@ -2,7 +2,9 @@ package com.beantastic.items;
 
 import java.util.*;
 
+import com.beantastic.logging.ChoiceOption;
 import com.beantastic.logging.Logger;
+import com.beantastic.logging.UserChoice;
 
 public class ItemManager {
     private final List<ItemClass> commonItems;
@@ -55,29 +57,22 @@ public class ItemManager {
 
     private ItemClass dropItem(List<ItemClass> items){
         ItemClass droppedItem = pickRandomItem(items);
-        logger.writeln("Item: " + droppedItem.getName() + "\n"
-            + "Description: " + droppedItem.getDescription() + "\n");
-        return droppedItem;
+        return pickUpItemOption(droppedItem);
     }
 
-    public ItemClass pickUpItemOption(ItemClass item){
-        logger.writeln("""
-                Pick up item?\s
-                1. Yes\s
-                2. No\s
-                """);
-        String playerInpuString = scanner.nextLine().toLowerCase();
-        return droppedItemActionOptions(playerInpuString, item);
-    }
-
-    private ItemClass droppedItemActionOptions(String option, ItemClass item){
-        if(option.equals("1") || option.equals("one") || option.equals("yes")){
-            return item;
-        }else if(option.equals("2") || option.equals("two") || option.equals("no")){
-            return null;
-        }else {
-            logger.writeln("Please input a valid option \n");
-            return pickUpItemOption(item);
-        }
+    private ItemClass pickUpItemOption(ItemClass item){
+        UserChoice<ItemClass> itemChoice = new UserChoice<>(scanner, logger, """
+                You find the following
+                
+                Item:\t%1$s
+                Description:\t%2$s
+                
+                Pick up item?
+                """.formatted(item.getName(), item.getDescription()),
+                List.of(
+                        new ChoiceOption<>("Yes", () -> item),
+                        new ChoiceOption<>("No", () -> null)
+                ));
+        return itemChoice.getChoice().outcome().get();
     }
 }

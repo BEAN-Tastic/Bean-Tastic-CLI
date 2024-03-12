@@ -16,19 +16,6 @@ public class Dialogue {
         this.enemy = enemy;
     }
 
-    //COMBAT DIALOGUE
-    public static String combatInputDialogue(){
-        return """
-                What will you do?
-
-                1. Attack!
-
-                2. Defend!
-
-                3. Rizz!
-                """;
-    }
-
     public String getAttackDialogue() {
         int randomNumber = random.nextInt(3);
         String playerClassName = player.getPlayerClass().getName();
@@ -102,12 +89,12 @@ public class Dialogue {
         int randomNumber = random.nextInt(5);
 
         return switch (randomNumber) {
-            case 0 -> "Are you a bean? Because you've bean on my mind all day.\n";
-            case 1 -> "Are you a coffee bean? Because you're brewing something strong in me.\n";
-            case 2 -> "Are you a refried bean? Because you're heating up my world\n";
-            case 3 -> "I peed my pants, can I get in yours?\n";
-            case 4 -> "You look like trash! Let me take you out\n";
-            default -> "Did you just fart? Because you blew me away!\n";
+            case 0 -> "Are you a bean? Because you've bean on my mind all day.";
+            case 1 -> "Are you a coffee bean? Because you're brewing something strong in me.";
+            case 2 -> "Are you a refried bean? Because you're heating up my world";
+            case 3 -> "I peed my pants, can I get in yours?";
+            case 4 -> "You look like trash! Let me take you out";
+            default -> "Did you just fart? Because you blew me away!";
         };
     }
 }
