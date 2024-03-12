@@ -18,7 +18,7 @@ public class Logger {
                 .forEachOrdered(c -> {
                     this.print(c);
                     try {
-                        Thread.sleep(ThreadLocalRandom.current().nextInt(10,  100+1)); // Adjust the delay as needed
+                        Thread.sleep(ThreadLocalRandom.current().nextInt(10,  10+1)); // Adjust the delay as needed
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -34,7 +34,11 @@ public class Logger {
         out.print(object);
     }
 
-    private void println() {
+    public void printBreak(){
+        out.println("-------------------------------------------");
+    }
+
+    public void println() {
         out.println();
     }
 

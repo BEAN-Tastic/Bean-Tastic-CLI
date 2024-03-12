@@ -89,10 +89,12 @@ public class Player implements StatBlockable {
 
     @Override
     public String toString() {
-        return "\nName: " + this.getName() + "\n\n" +
-                "Class: " + this.playerClass.getName() + "\n\n" +
-                "Health: " + this.health() + "\n\n" +
-                "Defense: " + this.defense() + "\n\n" +
-                "Rizz: " + this.rizz() + "\n---------------------------------------------------\n\n";
+        return """
+                Name: %s
+                Class: %s
+                Health: %s
+                Damage: %s
+                Defense: %s
+                Rizz: %s""".formatted(getName(), playerClass.getName(), health(), damage(), defense(), rizz());
     }
 }
