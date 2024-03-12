@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import com.beantastic.enemies.Enemy;
 import com.beantastic.enemies.EnemyManager;
+import com.beantastic.event.*;
 import com.beantastic.items.ItemClass;
 import com.beantastic.items.ItemManager;
 import com.beantastic.logging.Logger;
@@ -111,8 +112,11 @@ public class Main {
             return false;
         }
         Player player = playerManager.createPlayer();
-        PathManager pathManager = new PathManager(player, enemyManager, itemManager, random, logger, scanner, 3);
-        return gameOver(pathManager.generatePath());
+        ObstacleSystem obstacleSystem = new ObstacleSystem(random, new OldBean(scanner, logger), new FloorCrack(scanner, logger, random));
+        PathManager pathManager = new PathManager(player, enemyManager, itemManager, obstacleSystem, logger, scanner, 3);
+        Obstacle start = new JourneyStart(logger, scanner, new CombatSystem(logger, scanner, player, enemyManager.getEnemy(1), itemManager));
+        Obstacle end = new JourneyEnd(logger);
+        return gameOver(pathManager.generatePath(start, end));
     }
 
     private boolean getStartInput() {
