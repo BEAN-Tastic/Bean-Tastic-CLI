@@ -52,10 +52,11 @@ public class PathManager {
         );
 
         for (int stage = 1; stage <= numOfStagesInPath; stage++) {
-            stages.get((stage -1) % stages.size()).run();
             if (player.isDead() || player.isRizzedUp()) {
                 return false;
             }
+
+            stages.get((stage -1) % stages.size()).run();
         }
 
         finalObstacle.run(player);

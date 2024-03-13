@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+import com.beantastic.api.ApitController;
 import com.beantastic.enemies.Enemy;
 import com.beantastic.enemies.EnemyManager;
 import com.beantastic.event.*;
@@ -45,10 +46,21 @@ public class Main {
         Logger logger = new Logger(System.out);
 
         //TEMP DATA FOR NOW
-        EnemyManager enemyManager = addEnemies(random);
-        PlayerClassManager playerClassManager = addClass();
-        ItemManager itemManager = addItems(logger, random, scanner);
+        //EnemyManager enemyManager = addEnemies(random);
+        //PlayerClassManager playerClassManager = addClass();
+        //ItemManager itemManager = addItems(logger, random, scanner);
+
+
+        PlayerClassManager playerClassManager = ApitController.getClasses();
         PlayerManager playerManager = new PlayerManager(logger, scanner, playerClassManager.getClassList());
+
+        EnemyManager enemyManager = ApitController.getEnemies(random);
+        ItemManager itemManager = ApitController.getItems(logger, random, scanner);
+       // System.out.println(enemyManager.getEnemy(1).getName());
+       
+        System.out.println(enemyManager.getEnemy(1).getName());
+
+        //System.out.println(itemManager.getItems().get(0).getName());
 
         Main main = new Main(random, logger, scanner, enemyManager, itemManager, playerManager);
         // START GAME
@@ -56,6 +68,7 @@ public class Main {
         do {
             play = main.startGame();
         } while (play);
+
     }
 
     //TEMP DATA INSERTION\\
@@ -131,7 +144,7 @@ public class Main {
         return choices.getChoice().outcome().get();
     }
 
-    private boolean gameOver(boolean won){
+    public boolean gameOver(boolean won){
         if (won) {
             logger.writeln("Your are the mightiest Bean there ever was!");
         } else {

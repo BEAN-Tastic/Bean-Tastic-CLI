@@ -16,6 +16,11 @@ public class Dialogue {
         this.enemy = enemy;
     }
 
+    public int getRandomNum(int max){
+        int randomNumber = random.nextInt(max);
+        return randomNumber;
+    }
+
     public String getAttackDialogue() {
         int randomNumber = random.nextInt(3);
         String playerClassName = player.getPlayerClass().getName();
@@ -95,6 +100,14 @@ public class Dialogue {
             case 3 -> "I peed my pants, can I get in yours?";
             case 4 -> "You look like trash! Let me take you out";
             default -> "Did you just fart? Because you blew me away!";
+        };
+    }
+
+    public String enemyIntroduction(int randomNum){
+        return switch(randomNum) {
+            case 0 -> "*rumble*... *rumble*... \n ";
+            case 1 -> "As you tread carefully, a distant rumble breaks the silence, drawing nearer.";
+            default -> "You hear something behind you....";
         };
     }
 }

@@ -5,13 +5,17 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BeanClassDTO {
+public class ItemDTO {
     private String name;
 
     private String description;
 
-    private List<Map<String, Integer>> beanClassStatistics;
-    
+    private String quality;
+
+    @JsonProperty("itemStatistics")
+    private List<Map<String, Integer>> itemStatistics;
+
+
     public String getName(){
         return name;
     }
@@ -20,7 +24,12 @@ public class BeanClassDTO {
         return description;
     }
 
-    public List<Map<String, Integer>> getBeanClassStatistics(){
-        return beanClassStatistics;
+    public String getQuality(){
+        return quality;
     }
+
+    public List<Map<String, Integer>> getItemClassStatistic(){
+        return itemStatistics;
+    }
+
 }

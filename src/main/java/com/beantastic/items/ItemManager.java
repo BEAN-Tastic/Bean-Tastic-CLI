@@ -28,6 +28,10 @@ public class ItemManager {
         this.epicItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Epic")).toList();
     }
 
+    public List<ItemClass> getItems(){
+        return commonItems;
+    }
+
     public boolean calculateDropChance(int dropChance){
         int randomNumber = random.nextInt(101);
         return randomNumber <= dropChance;

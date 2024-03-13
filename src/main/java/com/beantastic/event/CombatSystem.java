@@ -36,6 +36,7 @@ public class CombatSystem {
     }
 
     public ItemClass doCombatEvent(){
+        logger.writeln(dialogue.enemyIntroduction(dialogue.getRandomNum(3)));
         logger.writeln("""
                 A %1$s appears!
                 %2$s""".formatted(enemy.getName(), enemy.getDescription()));
@@ -77,6 +78,8 @@ public class CombatSystem {
         if(player.isDead()) {
             return null;
         }
+
+        
         logger.printBreak();
         return combatOptions();
 
