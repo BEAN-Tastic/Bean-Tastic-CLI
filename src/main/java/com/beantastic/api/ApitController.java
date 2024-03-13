@@ -37,10 +37,6 @@ public class ApitController {
                     .retrieve()
                     .body(String.class);
 
-            // String result = "[{\"name\":\"Warrior\",\"description\":\"A strong warrior
-            // class\",\"beanClassStatistics\":[{\"health\":100,\"defense\":50,\"damage\":20,\"rizz\":10}]},{\"name\":\"Mage\",\"description\":\"A
-            // powerful mage
-            // class\",\"beanClassStatistics\":[{\"health\":80,\"defense\":30,\"damage\":50,\"rizz\":20}]}]";
 
             if (result != null && !result.trim().isEmpty()) {
                 ObjectMapper mapper = new ObjectMapper();
@@ -171,7 +167,6 @@ public class ApitController {
 
                    
                     for (EnemyDTO EnemyDTO : EnemyDTOList) {
-                        System.out.println(EnemyDTO.getName());
                         int health = 0;
                         int defense = 0;
                         int damage = 0;

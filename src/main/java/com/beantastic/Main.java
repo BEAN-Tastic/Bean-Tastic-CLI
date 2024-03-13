@@ -49,19 +49,12 @@ public class Main {
         //EnemyManager enemyManager = addEnemies(random);
         //PlayerClassManager playerClassManager = addClass();
         //ItemManager itemManager = addItems(logger, random, scanner);
-
-
-        PlayerClassManager playerClassManager = ApitController.getClasses();
-        PlayerManager playerManager = new PlayerManager(logger, scanner, playerClassManager.getClassList());
-
+        LoadingAnimation(logger);
         EnemyManager enemyManager = ApitController.getEnemies(random);
         ItemManager itemManager = ApitController.getItems(logger, random, scanner);
-       // System.out.println(enemyManager.getEnemy(1).getName());
-       
-        System.out.println(enemyManager.getEnemy(1).getName());
-
-        //System.out.println(itemManager.getItems().get(0).getName());
-
+        PlayerClassManager playerClassManager = ApitController.getClasses();
+        PlayerManager playerManager = new PlayerManager(logger, scanner, playerClassManager.getClassList());
+        
         Main main = new Main(random, logger, scanner, enemyManager, itemManager, playerManager);
         // START GAME
         boolean play;
@@ -166,4 +159,21 @@ public class Main {
                 ));
         return playAgain.getChoice().outcome().get();
     }
+
+    public static void LoadingAnimation(Logger logger) {
+
+        logger.print("LOading");
+        for (int i = 0; i < 10; i++) {
+            logger.print(".");
+            try {
+                Thread.sleep(600); 
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        logger.print("\n\n\n\n");
+
+    }
+    
+
 }
