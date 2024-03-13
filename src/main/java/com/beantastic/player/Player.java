@@ -33,11 +33,14 @@ public class Player implements StatBlockable {
 
     //HEALTH
     public int health(){
+        return maxHealth() - this.healthLost;
+    }
+
+    private int maxHealth() {
         return playerClass.health() +
                 this.items.stream()
                         .mapToInt(ItemClass::health)
-                        .sum() -
-                this.healthLost;
+                        .sum();
     }
 
     public int damage(){
@@ -63,11 +66,11 @@ public class Player implements StatBlockable {
     }
 
     public void takeDamage(int damage){
-        this.healthLost += damage;
+        this.healthLost = Math.min(Math.max((healthLost + damage), 0), maxHealth());
     }
 
     public void die(){
-        this.takeDamage(Integer.MAX_VALUE);
+        this.healthLost += health();
     }
 
     public boolean isDead(){
