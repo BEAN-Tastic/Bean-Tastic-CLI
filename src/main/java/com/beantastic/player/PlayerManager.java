@@ -53,6 +53,15 @@ public class PlayerManager {
                         %1$s
                         Description: %2$s"""
                         .formatted(playerClass.getName(), playerClass.getDescription()), () -> playerClass)).toList());
+        if(playerClassUserChoice.getChoice().outcome().get() == classList.get(1)){
+            String message = "418 I'm a teapot - refused to brew coffee";
+            int length = message.length();
+            String border = "+" + "-".repeat(length + 2) + "+";
+
+            logger.writeln(border);
+            logger.writeln("| " + message + " |");
+            logger.writeln(border);
+        }
         return playerClassUserChoice.getChoice().outcome().get();
     }
 
