@@ -12,12 +12,10 @@ public class EnemyDTO {
 
     private String difficulty;
 
-    @JsonProperty("difficultyStatistics")
-    private List<Map<String, Integer>> difficultyStatistics;
+    @JsonProperty("statistics")
+    private List<Map<String, Integer>> statistics;
 
     private List<String> actions;
-
-    private List<Map<String, Integer>> statisticModifiers;
 
     public String getName(){
         return name;
@@ -31,15 +29,12 @@ public class EnemyDTO {
         return difficulty;
     }
 
-    public List<Map<String, Integer>> getDifficultyStats(){
-        return difficultyStatistics;
+    public List<Map<String, Integer>> getStatistics(){
+        return statistics;
     }
 
     public List<String> getActions(){
         return actions;
     }
 
-    public List<Map<String, Integer>> getStatisticModifiers(){
-        return statisticModifiers;
-    }
 }

@@ -41,7 +41,7 @@ public class ApitController {
     public static Enemy getEnemy(EnemyDTO enemyDTO) {
         StatBlockMaker statBlockMaker = new StatBlockMaker();
 
-        for (Map<String, Integer> stat : enemyDTO.getStatisticModifiers())
+        for (Map<String, Integer> stat : enemyDTO.getStatistics())
             for (Map.Entry<String, Integer> entry : stat.entrySet()) statBlockMaker.setValue(entry);
 
         return new Enemy(enemyDTO.getName(), statBlockMaker.createStatBlock(), enemyDTO.getDifficulty(),
