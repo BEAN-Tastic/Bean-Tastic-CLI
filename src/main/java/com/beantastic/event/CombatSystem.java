@@ -61,7 +61,7 @@ public class CombatSystem {
         logger.writeln(dialogue.getAttackDialogue());
         enemy.takeDamage(player.damage());
         logger.writeln("You deal " + player.damage() + " damage");
-        logger.writeln("%1$s health is %1$s".format(enemy.getName(), enemy.health()));
+        logger.writeln("%1$s health is %2$s".format(enemy.getName(), enemy.health()));
 
         if(enemy.isDead()){
             logger.writeln(dialogue.getEnemyDeathDialogue());
