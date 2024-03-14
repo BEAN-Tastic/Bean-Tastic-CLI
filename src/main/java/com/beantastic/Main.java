@@ -45,24 +45,15 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Logger logger = new Logger(System.out);
 
-        //TEMP DATA FOR NOW
-        //EnemyManager enemyManager = addEnemies(random);
-        //PlayerClassManager playerClassManager = addClass();
-        //ItemManager itemManager = addItems(logger, random, scanner);
+        List<PlayerClass> playerClasses = ApitController.getClasses();
+        PlayerManager playerManager = new PlayerManager(logger, scanner, playerClasses);
 
-
-        PlayerClassManager playerClassManager = ApitController.getClasses();
-        PlayerManager playerManager = new PlayerManager(logger, scanner, playerClassManager.getClassList());
-
-        EnemyManager enemyManager = ApitController.getEnemies(random);
-        ItemManager itemManager = ApitController.getItems(logger, random, scanner);
-       // System.out.println(enemyManager.getEnemy(1).getName());
-       
-        System.out.println(enemyManager.getEnemy(1).getName());
-
-        //System.out.println(itemManager.getItems().get(0).getName());
-
+        List<Enemy> enemies = ApitController.getEnemies();
+        EnemyManager enemyManager = new EnemyManager(random, enemies.toArray(Enemy[]::new));
+        List<ItemClass> items = ApitController.getItems();
+        ItemManager itemManager = new ItemManager(logger, random, scanner, items.toArray(ItemClass[]::new));
         Main main = new Main(random, logger, scanner, enemyManager, itemManager, playerManager);
+
         // START GAME
         boolean play;
         do {
@@ -129,7 +120,7 @@ public class Main {
         }
         Player player = playerManager.createPlayer();
         ObstacleSystem obstacleSystem = new ObstacleSystem(random, new OldBean(scanner, logger), new FloorCrack(scanner, logger, random));
-        PathManager pathManager = new PathManager(player, enemyManager, itemManager, obstacleSystem, logger, scanner, 3);
+        PathManager pathManager = new PathManager(player, enemyManager, itemManager, obstacleSystem, logger, scanner, 6);
         Obstacle start = new JourneyStart(logger, scanner, new CombatSystem(logger, scanner, player, enemyManager.getEnemy(1), itemManager));
         Obstacle end = new JourneyEnd(logger);
         return gameOver(pathManager.generatePath(start, end));

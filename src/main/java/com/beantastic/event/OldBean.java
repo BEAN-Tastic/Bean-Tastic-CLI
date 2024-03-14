@@ -50,7 +50,7 @@ public class OldBean implements Obstacle {
                 """,
                 List.of(
                         new ChoiceOption<>("Take the gift", () -> {
-                            ItemClass gift = new ItemClass("Witch's ward", "A minor boon that increases your defense", new StatBlock(0, 1, 0, 0), "Common");
+                            ItemClass gift = new ItemClass("Witch's ward", "A minor boon that increases your defense", new StatBlock(0, 25, 0, 0), "Common");
                             logger.writeln("The old lady places a protection ward on you");
                             player.addItem(gift);
                             logger.writeln(gift.pickUpDescription());
@@ -59,7 +59,7 @@ public class OldBean implements Obstacle {
                             return null;
                         }),
                         new ChoiceOption<>("Hell nah, that's some creepy shit", () -> {
-                            ItemClass curse = new ItemClass("Witch's curse", "A curse that decreases your defense", new StatBlock(0, -1, 0, 0), "Common");
+                            ItemClass curse = new ItemClass("Witch's curse", "A curse that decreases your defense", new StatBlock(0, -25, 0, 0), "Common");
                             logger.writeln("""
                                 Old Green Bean: How dare you reject my gift!
                                 
