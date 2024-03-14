@@ -78,7 +78,7 @@ jobs:
       # PACKAGE FOR DISTRIBUTION
       - id: package
         name: Package Installer
-        run: jpackage --verbose --input ./target --main-jar ${{ vars.name }}-${{ needs.tag-version.outputs.nextTag }}.jar --main-class com.beantastic.Main --name ${{ vars.name }} --dest build/distributions --win-console
+        run: jpackage --verbose --input ./target --main-jar ${{ vars.name }}-${{ needs.tag-version.outputs.nextTag }}.jar --main-class org.springframework.boot.loader.JarLauncher --name ${{ vars.name }} --dest build/distributions --win-console
 
       # SAVE INSTALLER
       - id: upload-installer
