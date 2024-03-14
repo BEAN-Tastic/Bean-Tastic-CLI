@@ -1,16 +1,15 @@
 package com.beantastic.items;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.beantastic.logging.ChoiceOption;
 import com.beantastic.logging.Logger;
 import com.beantastic.logging.UserChoice;
 
 public class ItemManager {
-    private final List<ItemClass> commonItems;
-    private final List<ItemClass> uncommonItems;
-    private final List<ItemClass> rareItems;
-    private final List<ItemClass> epicItems;
+
+    private final Map<String, List<ItemClass>> items;
 
     private final Logger logger;
 
@@ -22,14 +21,8 @@ public class ItemManager {
         this.logger = logger;
         this.random = random;
         this.scanner = scanner;
-        this.commonItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Common")).toList();
-        this.uncommonItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Uncommon")).toList();
-        this.rareItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Rare")).toList();
-        this.epicItems = Arrays.stream(itemClasses).filter(itemClass -> itemClass.getRarity().equals("Epic")).toList();
-    }
-
-    public List<ItemClass> getItems(){
-        return commonItems;
+        this.items = Arrays.stream(itemClasses)
+                .collect(Collectors.groupingBy(ItemClass::getRarity));
     }
 
     public boolean calculateDropChance(int dropChance){
@@ -38,16 +31,9 @@ public class ItemManager {
     }
 
     public ItemClass pickItem(){
-        int randomNum = random.nextInt(101);
-            if(randomNum <= 50){
-                return dropItem(commonItems);
-            }else if (randomNum <= 75){
-                return dropItem(uncommonItems);
-            }else if(randomNum <= 90){
-                return dropItem(rareItems);
-            } else {
-                return dropItem(epicItems);
-            }
+        int randomNum = random.nextInt(items.size());
+        String rarity = items.keySet().stream().toList().get(randomNum);
+        return dropItem(items.get(rarity));
     }
 
     private ItemClass pickRandomItem(List<ItemClass> items){
