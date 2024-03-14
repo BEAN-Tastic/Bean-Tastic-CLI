@@ -1,20 +1,28 @@
 package com.beantastic.oauth;
 
+import com.beantastic.utils.PropertiesLoader;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class GitHubOAuth {
 
     public static String getAccessToken() throws IOException, InterruptedException {
 
-        String clientId = ""; // TODO
-        String clientSecret = "";// TODO
+        String clientIdKey = "clientId";
+        Properties clientIdProperty = PropertiesLoader.loadProperties();
+        String clientId = clientIdProperty.getProperty(clientIdKey);
 
+        String clientSecretKey = "clientSecret";
+        Properties clientSecretProperty = PropertiesLoader.loadProperties();
+        String clientSecret = clientSecretProperty.getProperty(clientSecretKey);
+        
         String authorizationEndpoint = "https://github.com/login/oauth/authorize";
         String tokenEndpoint = "https://github.com/login/oauth/access_token";
 
