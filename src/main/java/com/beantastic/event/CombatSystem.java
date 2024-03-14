@@ -91,6 +91,9 @@ public class CombatSystem {
             logger.writeln("Your rizz was not high enough, " + enemy.getName() + " retaliates in disgust and deals " + enemy.damage()/ 2);
             player.takeDamage(enemy.damage()/ 2);
             logger.printBreak();
+            if(player.isDead()) {
+                return null;
+            }
             return combatOptions();
         }
     }
