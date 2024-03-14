@@ -15,14 +15,19 @@ public class GitHubOAuth {
 
     public static String getAccessToken() throws IOException, InterruptedException {
 
-        String clientIdKey = "clientId";
+        String clientIdKey = "\"clientId\"";
         Properties clientIdProperty = PropertiesLoader.loadProperties();
-        String clientId = clientIdProperty.getProperty(clientIdKey);
 
-        String clientSecretKey = "clientSecret";
+        String clientId = clientIdProperty.getProperty(clientIdKey);
+        clientId = clientId.substring(clientId.indexOf('"') + 1,
+                clientId.lastIndexOf('"'));
+
+        String clientSecretKey = "\"clientSecret\"";
         Properties clientSecretProperty = PropertiesLoader.loadProperties();
         String clientSecret = clientSecretProperty.getProperty(clientSecretKey);
-        
+        clientSecret = clientSecret.substring(clientSecret.indexOf('"') + 1,
+                clientSecret.lastIndexOf('"'));
+
         String authorizationEndpoint = "https://github.com/login/oauth/authorize";
         String tokenEndpoint = "https://github.com/login/oauth/access_token";
 
