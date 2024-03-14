@@ -1,0 +1,27 @@
+name: Test Java CLI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  run-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3.5.3
+        id: checkout-code
+        name: Checkout code
+        with:
+          ref: ${{ github.sha }}
+
+      # SETUP BUILD ENVIRONMENT
+      - id: setup-jdk
+        name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 21
+
+      # TEST
+      - id: test
+        name: Test Application
+        run: mvn --batch-mode test
