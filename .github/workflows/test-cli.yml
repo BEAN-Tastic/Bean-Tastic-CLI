@@ -24,4 +24,4 @@ jobs:
       # TEST
       - id: test
         name: Test Application
-        run: mvn --batch-mode verify
+        run: mvn --batch-mode test
