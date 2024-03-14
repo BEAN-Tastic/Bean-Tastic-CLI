@@ -44,8 +44,6 @@ public class Main {
         Random random = new Random();
         Scanner scanner = new Scanner(System.in);
         Logger logger = new Logger(System.out);
-        printBean(logger);
-        LoadingAnimation(logger);
         
         List<PlayerClass> playerClasses = ApitController.getClasses();
         PlayerManager playerManager = new PlayerManager(logger, scanner, playerClasses);
@@ -107,63 +105,5 @@ public class Main {
                         new ChoiceOption<>("No!", () -> false)
                 ));
         return playAgain.getChoice().outcome().get();
-    }
-
-    public static void LoadingAnimation(Logger logger) {
-
-        logger.print("Loading");
-        for (int i = 0; i < 10; i++) {
-            logger.print(".");
-            try {
-                Thread.sleep(600); 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        logger.print("\n\n\n\n");
-
-    }
-
-
-    public static void printBean(Logger logger){
-        logger.println("                                          @@@  \r\n" + //
-                        "                                         @@@@  \r\n" + //
-                        "              @@@@@@@@@@@@@@             @@@@  \r\n" + //
-                        "           @@@@@@@@@@@@@@@@@@@@          @@@@  \r\n" + //
-                        "         @@@@@@@          @@@@@@@       @@@@@  \r\n" + //
-                        "       @@@@@@                @@@@@      @@@@@  \r\n" + //
-                        "      @@@@@                   @@@@@     @@@@@  \r\n" + //
-                        "     @@@@@    @@          @@    @@@@   @@@@@@  \r\n" + //
-                        "    @@@@@    @@@@        @@@@   @@@@   @@@@@@  \r\n" + //
-                        "   @@@@@      @@          @@    @@@@@  @@@@@@  \r\n" + //
-                        "   @@@@                         @@@@@  @@@@@@@  \r\n" + //
-                        "  @@@@            @@@@@@@       @@@@@ @@@@@@@@@\r\n" + //
-                        "  @@@@                          @@@@@ @@@@@@@@@\r\n" + //
-                        "  @@@@                          @@@@    @@@@   \r\n" + //
-                        " @@@@@  @@@@                   @@@@@@@@@@@@@   \r\n" + //
-                        " @@@@   @@@@                   @@@@@@@@@@@@@   \r\n" + //
-                        "@@@@@  @@@@                    @@@@            \r\n" + //
-                        "@@@@   @@@@                    @@@@            \r\n" + //
-                        "@@@@   @@@@@                   @@@@            \r\n" + //
-                        "@@@@                          @@@@@            \r\n" + //
-                        "@@@@@                        @@@@@             \r\n" + //
-                        " @@@@@                     @@@@@@              \r\n" + //
-                        "  @@@@@@@             @@@@@@@@@                \r\n" + //
-                        "    @@@@@@@@@@@@@@@@@@@@@@@@@                  \r\n" + //
-                        "       @@@@@@@@@@@@@@@@@@                      \r\n" + //
-                        "        @@@@      @@@@                         \r\n" + //
-                        "        @@@@      @@@@                         \r\n" + //
-                        "        @@@@@@    @@@@@@                       \r\n" + //
-                        "        @@@@@@     @@@@@                       ");
-
-                        logger.println("""
-                            ____                         _            _   _                    _                 _                  \s
-                           |  _ \\                       | |          | | (_)          /\\      | |               | |                 \s
-                           | |_) | ___  __ _ _ __ ______| |_ __ _ ___| |_ _  ___     /  \\   __| |_   _____ _ __ | |_ _   _ _ __ ___ \s
-                           |  _ < / _ \\/ _` | '_ \\______| __/ _` / __| __| |/ __|   / /\\ \\ / _` \\ \\ / / _ \\ '_ \\| __| | | | '__/ _ \\\s
-                           | |_) |  __/ (_| | | | |     | || (_| \\__ \\ |_| | (__   / ____ \\ (_| |\\ V /  __/ | | | |_| |_| | | |  __/\s
-                           |____/ \\___|\\__,_|_| |_|      \\__\\__,_|___/\\__|_|\\___| /_/    \\_\\__,_| \\_/ \\___|_| |_|\\__|\\__,_|_|  \\___|\
-                          
-                          """);
     }
 }
