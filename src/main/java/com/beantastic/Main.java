@@ -44,6 +44,8 @@ public class Main {
         Random random = new Random();
         Scanner scanner = new Scanner(System.in);
         Logger logger = new Logger(System.out);
+       
+        LoadingAnimation(logger);
 
         List<PlayerClass> playerClasses = ApitController.getClasses();
         PlayerManager playerManager = new PlayerManager(logger, scanner, playerClasses);
@@ -61,49 +63,7 @@ public class Main {
         } while (play);
 
     }
-
-    //TEMP DATA INSERTION\\
-    public static PlayerClassManager addClass(){
-        return new PlayerClassManager(
-                new PlayerClass("Green Bean Warrior",
-                        "A sturdy bean skilled in close combat, wielding the might of beans with brute force.",
-                        new StatBlock(5, 3, 2, 2)),
-                new PlayerClass("Magic Coffee Bean",
-                        "A magical bean adept at harnessing the mystical energies of beans to cast powerful spells.",
-                        new StatBlock(3, 2, 3, 3)),
-                new PlayerClass("Sneaky Black Bean",
-                        "A nimble bean with a knack for stealth and deception, striking enemies from the shadows.",
-                        new StatBlock(5, 3, 2, 2)),
-                new PlayerClass("Divine Lima Bean",
-                        "A benevolent bean with divine powers, healing allies and smiting foes with righteous fury.",
-                        new StatBlock(5, 3, 2, 2)),
-                new PlayerClass("Arrowhead Pinto Bean",
-                        "A skilled bean archer, raining down arrows upon enemies with deadly precision.",
-                        new StatBlock(5, 3, 2, 2)));
-    }
-
-    public static ItemManager addItems(Logger logger, Random random, Scanner scanner){
-        return new ItemManager(
-                logger,
-                random,
-                scanner,
-                new ItemClass("SHOE", "HOT PINK HIGH HEEL", new StatBlock(0, 0, 0, 1), "Common"),
-                new ItemClass("tea cup", "steaming black tea", new StatBlock(0, 0, -1, 0), "Rare"));
-    }
-
-    public static EnemyManager addEnemies(Random random){
-        return new EnemyManager(random,
-                new Enemy("Sorcerer Soup", new StatBlock(3, 0, 1, 2), "Easy",
-                        "Fiery Ladle Strike- The Sorcerer Soup hurls a fiery ladle at you, inflicting heavy damage to your health.",
-                        "A mystical soup with potent magical properties."),
-                new Enemy("Cursed Carrot", new StatBlock( 5, 0, 2, 3), "Medium",
-                        "Toxic Root Slam- The Cursed Carrot slams its toxic roots into the ground, weakening your defenses.",
-                        "A carrot cursed by dark magic, capable of unleashing havoc."),
-                new Enemy("Haunted Hamburger", new StatBlock(7, 0, 3, 4), "Hard",
-                        "Seductive Sizzle- The Haunted Hamburger emits a seductive sizzle, enchanting you and lowering your charisma.",
-                        "A haunted hamburger possessed by vengeful spirits."));
-    }
-
+   
     public boolean startGame(){
         logger.println("""
                   ____                         _            _   _                    _                 _                  \s
@@ -156,5 +116,20 @@ public class Main {
                         new ChoiceOption<>("No!", () -> false)
                 ));
         return playAgain.getChoice().outcome().get();
+    }
+
+    public static void LoadingAnimation(Logger logger) {
+
+        logger.print("Loading");
+        for (int i = 0; i < 10; i++) {
+            logger.print(".");
+            try {
+                Thread.sleep(600); 
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        logger.print("\n\n\n\n");
+
     }
 }
