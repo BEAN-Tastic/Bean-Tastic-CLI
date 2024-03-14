@@ -91,7 +91,7 @@ public class Dialogue {
     }
 
     public String getRizzDialogue(){
-        int randomNumber = random.nextInt(5);
+        int randomNumber = random.nextInt(7);
 
         return switch (randomNumber) {
             case 0 -> "Are you a bean? Because you've bean on my mind all day.";
