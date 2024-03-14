@@ -47,9 +47,6 @@ public class GitHubOAuth {
         System.out.println("Waiting for authorization...");
         String authorizationCode = server.waitForAuthorization();
 
-        System.out.println(clientId);
-
-        System.out.println(clientSecret);
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(tokenEndpoint))
