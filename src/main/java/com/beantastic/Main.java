@@ -120,7 +120,7 @@ public class Main {
         }
         Player player = playerManager.createPlayer();
         ObstacleSystem obstacleSystem = new ObstacleSystem(random, new OldBean(scanner, logger), new FloorCrack(scanner, logger, random));
-        PathManager pathManager = new PathManager(player, enemyManager, itemManager, obstacleSystem, logger, scanner, 3);
+        PathManager pathManager = new PathManager(player, enemyManager, itemManager, obstacleSystem, logger, scanner, 6);
         Obstacle start = new JourneyStart(logger, scanner, new CombatSystem(logger, scanner, player, enemyManager.getEnemy(1), itemManager));
         Obstacle end = new JourneyEnd(logger);
         return gameOver(pathManager.generatePath(start, end));
