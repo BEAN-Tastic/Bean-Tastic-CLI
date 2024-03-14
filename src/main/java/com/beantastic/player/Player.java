@@ -70,7 +70,7 @@ public class Player implements StatBlockable {
     }
 
     public void die(){
-        this.healthLost += health();
+        this.healthLost = maxHealth();
     }
 
     public boolean isDead(){
