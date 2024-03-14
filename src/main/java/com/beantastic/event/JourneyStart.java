@@ -77,8 +77,14 @@ public class JourneyStart implements Obstacle{
     private void keepWalking(){
         UserChoice<Void> choices = new UserChoice<>(scanner, logger, "You move forward, looking for a way out",
                 List.of(
-                        new ChoiceOption<>("Keep walking forward.", () -> null),
-                        new ChoiceOption<>("Look around.", () -> null)
+                        new ChoiceOption<>("Keep walking forward.", () -> {
+                            logger.writeln("You slowly start walking. unsure of your steps... Your little bean legs shakey...");
+                            return null;
+                        }),
+                        new ChoiceOption<>("Look around.", () -> {
+                            logger.writeln("You look around the dark eary floor, eveyrthing new and unfamiliar... You start slowly walking... ");
+                            return null;
+                        })
                 ));
         choices.getChoice().outcome().get();
     }

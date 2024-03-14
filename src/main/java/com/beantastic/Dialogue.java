@@ -91,7 +91,7 @@ public class Dialogue {
     }
 
     public String getRizzDialogue(){
-        int randomNumber = random.nextInt(5);
+        int randomNumber = random.nextInt(7);
 
         return switch (randomNumber) {
             case 0 -> "Are you a bean? Because you've bean on my mind all day.";
@@ -99,6 +99,8 @@ public class Dialogue {
             case 2 -> "Are you a refried bean? Because you're heating up my world";
             case 3 -> "I peed my pants, can I get in yours?";
             case 4 -> "You look like trash! Let me take you out";
+            case 5 -> "Do you work at Subway? Cause you just gave me a foot-long.";
+            case 6 -> "You slut drop holding eye contact";
             default -> "Did you just fart? Because you blew me away!";
         };
     }
@@ -110,4 +112,6 @@ public class Dialogue {
             default -> "You hear something behind you....";
         };
     }
+
+    
 }

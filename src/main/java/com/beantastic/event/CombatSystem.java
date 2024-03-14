@@ -61,6 +61,7 @@ public class CombatSystem {
         logger.writeln(dialogue.getAttackDialogue());
         enemy.takeDamage(player.damage());
         logger.writeln("You deal " + player.damage() + " damage");
+        logger.writeln("%1$s health is %2$s".format(enemy.getName(), enemy.health()));
 
         if(enemy.isDead()){
             logger.writeln(dialogue.getEnemyDeathDialogue());
@@ -73,6 +74,7 @@ public class CombatSystem {
         logger.writeln(enemy.getName());
         logger.writeln(enemy.getAttackDialogue());
         logger.writeln("You take " + enemy.damage() + " damage");
+        logger.writeln("Your health " + player.health());
         player.takeDamage(enemy.damage());
 
         if(player.isDead()) {
@@ -88,6 +90,7 @@ public class CombatSystem {
     private ItemClass rizz(){
         logger.writeln("%s:\t%s".formatted(player.getName(), dialogue.getRizzDialogue()));
         if(player.rizz() > enemy.rizz()){
+            logger.writeln(enemy.getName() + ": " + dialogue.getRizzDialogue());
             return rizzOptions();
         }else{
             //you cant rizz up the enemy, and they do 1/2 damage
@@ -125,6 +128,7 @@ public class CombatSystem {
 
     }
     private ItemClass rizzMore () {
+        logger.writeln("Something comes over you, you cant hold in the rizz anymore");
         logger.writeln(dialogue.getRizzDialogue());
         logger.writeln("""
             There is something in the air... %1$s starts to look irresistible
