@@ -1,9 +1,20 @@
 # BEAN-Tastic-Adventure
+(No Mac and Linux support)
 
 To play the game: 
 - Download the latest release
 - Install the .exe
-- Navigate to your program files
-- Find and open the bean-tastic-adventure folder
-- Open the file in your terminal
-- run the command .\bean-tastic-adventure.exe
+- Create a shortcut
+    - Navigate to the shortcut > click and run
+    - Go to the link displayed and login using GitHub
+    - Play game!
+
+- If you did not create a shortcut:
+    - Naviagte to where you installed the folder
+    - Open the folder
+    - Open bean-tastic-adventure
+    - Go to the link displayed and login using GitHub
+    - Play game!
+
+
+
