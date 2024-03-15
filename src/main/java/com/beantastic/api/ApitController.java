@@ -8,9 +8,9 @@ import com.beantastic.enemies.Enemy;
 import com.beantastic.items.ItemClass;
 import com.beantastic.player.PlayerClass;
 
-public class ApitController {
+public class ApitController implements Apit {
 
-    private String accessToken;
+    private final String accessToken;
 
     public ApitController(String accessToken) {
         this.accessToken = accessToken;
@@ -47,7 +47,7 @@ public class ApitController {
                 itemDTO.getQuality());
     }
 
-    public Enemy getEnemy(EnemyDTO enemyDTO) {
+    private Enemy getEnemy(EnemyDTO enemyDTO) {
         StatBlockMaker statBlockMaker = new StatBlockMaker();
 
         for (Map<String, Integer> stat : enemyDTO.getStatistics())
