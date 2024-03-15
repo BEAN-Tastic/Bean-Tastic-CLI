@@ -12,6 +12,8 @@ public class PlayerManager {
     private final List<PlayerClass> classList;
     private final Scanner scanner;
 
+    private boolean canChooseCoffee;
+
     public static Player getPlayer() { // TODO remove dummy once static migration is done
         return null;
     }
@@ -20,6 +22,7 @@ public class PlayerManager {
         this.logger = logger;
         this.scanner = scanner;
         this.classList = classList;
+        this.canChooseCoffee = false;
     }
 
     public Player createPlayer(){
@@ -53,7 +56,9 @@ public class PlayerManager {
                         %1$s
                         Description: %2$s"""
                         .formatted(playerClass.getName(), playerClass.getDescription()), () -> playerClass)).toList());
-        if(playerClassUserChoice.getChoice().outcome().get() == classList.get(1)){
+        PlayerClass playerClass = playerClassUserChoice.getChoice().outcome().get();
+        if(playerClass == classList.get(1) && !this.canChooseCoffee){
+            this.canChooseCoffee = true;
             String message = "418 I'm a teapot - refused to brew coffee";
             int length = message.length();
             String border = "+" + "-".repeat(length + 2) + "+";
@@ -61,8 +66,9 @@ public class PlayerManager {
             logger.writeln(border);
             logger.writeln("| " + message + " |");
             logger.writeln(border);
+            return pickClass();
         }
-        return playerClassUserChoice.getChoice().outcome().get();
+        return playerClass;
     }
 
     private void displayCharacter(Player player){
